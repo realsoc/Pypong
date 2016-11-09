@@ -1,0 +1,94 @@
+div(class="container" ng-controller="ValidateCtrl")
+  h1 Validate Scores
+  p Enter players' name to process the games
+  table(class="table")
+    thead
+      tr
+        th Number
+        th Player1's Name
+        th Player1's Score
+        th Player2's Score
+        th Player2's Name
+        th Type
+        th Date
+        th Remove
+    tbody
+      tr(class="gameToValidate" ng-repeat="game in games" id="{{game._id}}")
+        th {{game.number}}
+        td 
+          select( ng-init="validateGame.P1 = players[0]" ng-model="validateGame.P1" ng-options="player.name for player in players" class="form-control" class="player1Name")
+        td {{game.sPlayer1}}
+        td {{game.sPlayer2}}
+        td 
+          select(ng-init="validateGame.P2 = players[1]" ng-model="validateGame.P2" ng-options="player.name for player in players" class="form-control" class="player2Name")
+            option Select player
+        td {{game.type}}
+        td {{game.date}}
+        td 
+          input(type="checkbox" ng-click="deleteGame(game._id,$index)")
+div(class="container")
+    div(class="text-right btn-toolbar")
+      button(type="button" class="btn btn-primary btn-lg col-xs-2" data-toggle="modal" data-target="#addGameModal") Add Game
+      button(type="button" class="btn btn-secondary btn-lg col-xs-2" data-toggle="modal" data-target="#addPlayerModal") Add Player
+      button(type="button" class="btn btn-success btn-lg col-xs-2" id="validateButton" ng-click="validateGames();") Validate
+div(class="modal fade" id="addGameModal" tabindex="-1" role="dialog" aria-labelledby="addGameModalLabel" aria-hidden="true")
+  div(class="modal-dialog")
+    div(class="modal-content")
+      div(class="modal-header")
+        button(type="button" class="close" data-dismiss="modal")
+          span(aria-hidden="true") &times;
+          span(class="sr-only") Close
+        h4 Add Game
+      div(class="modal-body")
+        form(class="form-game" role="form")
+          div(class="form-group")
+            label(class="col-sm-5 control-label" for="inputGameNumber") Game Number
+            input(type="number" class="form-control" id="inputGameNumber" placeholder="Game Number" ng-model="gameFormData.number")
+          div(class="row")
+            div(class="form-group col-xs-6")
+              label(class="col-sm-6 control-label" for="inputP1Name") Player 1
+              select(ng-init="gameFormData.player1 = players[0]" ng-options="player.name for player in players" id="inputPlayer1" class="form-control" ng-model="gameFormData.player1")
+                option Select player
+            div(class="form-group col-xs-6")
+              label(class="col-sm-6 control-label" for="inputP1Score") Score Player 1
+              input(type="number" class="form-control" id="inputScoreP1" ng-model="gameFormData.sPlayer1")
+          div(class="row")
+            div(class="form-group col-xs-6")
+              label(class="col-sm-6 control-label" for="inputP2Name") Player 2
+              select(ng-init="gameFormData.player2 = players[1]" ng-options="player.name for player in players" id="inputPlayer2"  class="form-control" ng-model="gameFormData.player2")
+                option Select player
+            div(class="form-group col-xs-6")
+              label(class="col-sm-6 control-label" for="inputP2Score") Score Player 2
+              input(type="number" class="form-control" id="inputScoreP2" ng-model="gameFormData.sPlayer2")
+          div(class="row")
+            div(class="form-group col-xs-6")
+              label(class="col-sm-6 control-label" for="inputGameType") Game Type
+              select(ng-init="gameFormData.type = 11" class="form-control" id="inputGameType" ng-model="gameFormData.type")
+                option(value=6) 6
+                option(value=11) 11
+                option(value=21) 21
+            div(class="form-group col-xs-6")
+              label(class="col-sm-6 control-label" for="inputGameDate") Game Date
+              input(type="date" class="form-control" id="inputGameDate" ng-model="gameFormData.date")
+      div(class="modal-footer")
+        button(type="button" class="btn btn-default" data-dismiss="modal") Close
+        button(type="submit" class="btn btn-primary" ng-click="createGame($index);") Create Game
+div(class="modal fade" id="addPlayerModal" tabindex="-1" role="dialog" aria-labelledby="addPlayerModalLabel" aria-hidden="true")
+  div(class="modal-dialog")
+    div(class="modal-content")
+      div(class="modal-header")
+        button(type="button" class="close" data-dismiss="modal")
+          span(aria-hidden="true") &times;
+          span(class="sr-only") Close
+        h4 Add Player
+      div(class="modal-body")
+        form(class="form-game" role="form")
+          div(class="form-group")
+            label(class="col-sm-5 control-label" for="inputPlayerName") Player Name
+            input(type="text" class="form-control" id="inputPlayerName" placeholder="Player Name" ng-model="playerFormData.name")
+      div(class="modal-footer")
+        button(type="button" class="btn btn-default" data-dismiss="modal") Close
+        button(type="submit" class="btn btn-primary" ng-click="createPlayer($index);") Create Player
+
+
+

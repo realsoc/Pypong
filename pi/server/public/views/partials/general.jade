@@ -1,0 +1,46 @@
+div(class="container" ng-controller="GeneralCtrl")
+  h1 General Ranking
+  p Enter players' name to process the games
+  div(class="table-responsive col-xs-6")
+    table(class="table")
+      thead
+        tr
+          th Rank
+          th Name
+          th Games Won
+          th Points Scored
+          th Games Lost
+          th Points Lost
+          th Level
+      tbody
+        tr(ng-repeat="rank in ranking")
+          th {{$index}}
+          td {{rank.name}}
+          td {{rank.gamesWon}}
+          td {{rank.pointsScored}}
+          td {{rank.gamesLost}}
+          td {{rank.pointsLost}}
+          td {{rank.level}}
+  div(class="table-responsive col-xs-6")
+    table(class="table")
+      thead
+        tr
+          th Label
+          th 6pts
+          th 11pts
+          th 21pts
+          th Total
+      tbody
+        tr
+          th Games Played
+          td {{infos["6GP"]}}
+          td {{infos["11GP"]}}
+          td {{infos["21GP"]}}
+          td {{infos["0GP"]}}
+        tr
+          th Points Scored
+          td {{infos["6PS"]}}
+          td {{infos["11PS"]}}
+          td {{infos["21PS"]}}
+          td {{infos["0PS"]}}
+

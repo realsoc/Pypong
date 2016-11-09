@@ -1,2 +1,7 @@
 *.log
 *.aux
+!/pi/server/node_modules
+/pi/server/node_modules/*
+!/pi/server/node_modules/config
+/pi/server/public/bower_components
+/pi/server/db

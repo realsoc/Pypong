@@ -1,0 +1,70 @@
+div(class="container" ng-controller="PlayerCtrl")
+  h1 Player details
+  p Choose a player to show his informations
+   div(class="row")
+      div(class="form-group col-xs-6")
+        label(class="col-sm-6 control-label" for="player1Name") Player 1
+        select(ng-init="playerInput.player1 = players[0]" ng-options="player.name for player in players" id="player1Name" class="form-control" ng-model="playerInput.player1")
+          option Select player
+      div(class="form-group col-xs-6")
+        label(class="col-sm-6 control-label" for="player2Name") Player 2
+        select(ng-init="playerInput.player1 = players[0]" class="form-control" id="player2Name" ng-model="playerInput.player2" ng-options="player.name for player in players")
+          option Select
+  div(class="table-responsive col-xs-6")
+    table(class="table")
+      thead
+        tr
+          th Number
+          th Player 1
+          th Player 1 Score
+          th Player 2 Score
+          th Player 2
+          th Date
+      tbody
+        tr(ng-repeat="game in games")
+          th {{game.number}}
+          td {{game.player1}}
+          td {{game.sPlayer1}}
+          td {{game.sPlayer2}}
+          td {{game.player2}}
+          td {{game.date}}
+  div(class="table-responsive col-xs-6")
+    table(class="table")
+      thead
+        tr
+          th Label
+          th 6pts
+          th 11pts
+          th 21pts
+          th Total
+      tbody
+        tr
+          th Games Played
+          td {{infos.6GP}}
+          td {{infos.11GP}}
+          td {{infos.21GP}}
+          td {{infos.0GP}}
+        tr
+          th Games Won
+          td {{infos.6GW}}
+          td {{infos.11GW}}
+          td {{infos.21GW}}
+          td {{infos.0GW}}
+        tr
+          th Games Lost
+          td {{infos.6GL}}
+          td {{infos.11GL}}
+          td {{infos.21GL}}
+          td {{infos.0GL}}
+        tr
+          th Points Scored
+          td {{infos.6PS}}
+          td {{infos.11PS}}
+          td {{infos.21PS}}
+          td {{infos.0PS}}
+        tr
+          th Points Lost
+          td {{infos.6PL}}
+          td {{infos.11PL}}
+          td {{infos.21PL}}
+          td {{infos.0PL}}

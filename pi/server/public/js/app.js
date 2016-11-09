@@ -14,15 +14,15 @@ config(function ($routeProvider, $locationProvider) {
   $routeProvider.
     when('/validateView', {
        templateUrl: 'partials/validate'
-       //,       controller: 'MyCtrl1'
+       ,       controller: 'ValidateCtrl'
      }).
     when('/generalView', {
       templateUrl: 'partials/general'
-      //, controller: 'MyCtrl2'
+      , controller: 'GeneralCtrl'
     }).
     when('/playerView', {
-      templateUrl: 'partials/playerView'
-      //, controller: 'MyCtrl2'
+      templateUrl: 'partials/player'
+      , controller: 'PlayerCtrl'
     }).
     otherwise({
       redirectTo: '/validateView'
