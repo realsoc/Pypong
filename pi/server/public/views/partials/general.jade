@@ -13,8 +13,8 @@ div(class="container" ng-controller="GeneralCtrl")
           th Points Lost
           th Level
       tbody
-        tr(ng-repeat="rank in ranking")
-          th {{$index}}
+        tr(ng-repeat="rank in data.ranking")
+          th {{$index+1}}
           td {{rank.name}}
           td {{rank.gamesWon}}
           td {{rank.pointsScored}}
@@ -33,14 +33,14 @@ div(class="container" ng-controller="GeneralCtrl")
       tbody
         tr
           th Games Played
-          td {{infos["6GP"]}}
-          td {{infos["11GP"]}}
-          td {{infos["21GP"]}}
-          td {{infos["0GP"]}}
+          td {{data.infos["6GP"]}}
+          td {{data.infos["11GP"]}}
+          td {{data.infos["21GP"]}}
+          td {{data.infos["0GP"]}}
         tr
           th Points Scored
-          td {{infos["6PS"]}}
-          td {{infos["11PS"]}}
-          td {{infos["21PS"]}}
-          td {{infos["0PS"]}}
+          td {{data.infos["6PS"]}}
+          td {{data.infos["11PS"]}}
+          td {{data.infos["21PS"]}}
+          td {{data.infos["0PS"]}}
 

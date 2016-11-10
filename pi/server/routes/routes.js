@@ -5,6 +5,19 @@ var schemas = require('config/models');
 var GameModel = schemas.Game;
 var Game = require("config/game");
 
+/*var auth = function(req, res, next) {
+  if (req.session && req.session.user === "rdf" && req.session.admin)
+    return next();
+  else
+    return res.sendStatus(401);
+};*/
+
+Date.prototype.toDateInputValue = (function() {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+
 function sendBack(res,data){
      res.json(data);
 }
@@ -18,69 +31,62 @@ module.exports = function(app) {
      });
      app.post('/api/players',function(req,res){
           Player.addPlayer(req.body.name);
-          Player.getAll(sendBack,res);
+          sendBack(res,"{'result':'ok'}");
      });
      app.delete('/api/players/:playerId', function(req,res){
           Player.removeById(playerId);
-          Player.getAll(sendBack,res);
+          sendBack(res,"{'result':'ok'}");
      });
      app.get('/api/games',function(req,res){
           Game.getAll(sendBack,res);
      });
      app.post('/api/games',function(req,res){
           var number,player1,player2,type,sPlayer1,sPlayer2;
-          if((req.body.sPlayer1 == null || req.body.sPlayer2 == null) && req.body.player1 != null && req.body.player2 !=null && req.body._id !=null){
-               var newGame = new GameModel({
-               _id            :    req.body._id,
-               player1        :    req.body.player1.name,
-               player2        :    req.body.player2.name
-
-          });
-               Game.updateGame(newGame);
-               Game.getUninit(sendBack,res);
-               return;
-          }else if(req.body.sPlayer1 == null || req.body.sPlayer2 == null){
-               res.json("{'error':'Game empty}'");
-               return;
+          var newGame = new GameModel();
+          newGame._id = req.body._id;
+          if(req.body._id != null)
+               newGame._id = req.body._id;
+          if(req.body.player1 != null){
+               newGame.player1 = req.body.player1.name;
+               if(!Player.testPlayer(newGame.player1)){
+                    sendBack(res,"{'result':'Player 1 does not exists'");
+                    return;
+               }
           }
-          if(req.body.player1 == null || req.body.player1.name == null){
-               player1 = "";
+          if(req.body.player2 != null){
+               newGame.player2 = req.body.player2.name;
+               if(!Player.testPlayer(newGame.player2)){
+                    sendBack(res,"{'result':'Player 2 does not exists'");
+                    return;
+               }
+          }
+          if(req.body.sPlayer2 != null)
+               newGame.sPlayer2 = req.body.sPlayer2;
+          if(req.body.sPlayer1 != null)
+               newGame.sPlayer1 = req.body.sPlayer1;
+          if(req.body.number != null)
+               newGame.number = req.body.number;
+          if(req.body.date != null){
+               newGame.date = req.body.date;
           }else{
-               player1 = req.body.player1.name;
+               newGame.date = new Date().toDateInputValue();
           }
-          if(req.body.player2 == null || req.body.player2.name == null){
-               player2 = "";
-          }else{
-               player2 = req.body.player2.name;
+          if(req.body.type != null){
+               if(req.body.type ==="6"|| req.body.type == 6){
+                    newGame.type = 6;
+               }else if(req.body.type === "11"|| req.body.type == 11){
+                    newGame.type = 11;
+               }else if(req.body.type === "21"|| req.body.type == 21){
+                    newGame.type = 21;
+               }
           }
-          if(req.body.number == null){
-               number = 0;
-          }else{
-               number = req.body.number;
-          }if(req.body.type ==="6"|| req.body.type == 6){
-               type = 6;
-          }else if(req.body.type == "11"|| req.body.type == 11){
-               type = 11;
-          }else if(req.body.type == "21"|| req.body.type == 21){
-               type = 21;
-          }
-          var newGame = new GameModel({
-               number         :    number,
-               player1        :    player1,
-               player2        :    player2,
-               sPlayer1       :    req.body.sPlayer1,
-               sPlayer2       :    req.body.sPlayer2,
-               date           :    req.body.date,
-               type           :    type
-
-          });
           Game.updateGame(newGame);
-          Game.getUninit(sendBack,res);
+          res.sendStatus(200);
      });
      app.delete('/api/games/:id', function(req,res){
           var id = req.params.id;
           Game.removeById(id);
-          Game.getAll(sendBack,res);
+          res.sendStatus(200);
      });
 
      // VALIDATE 
@@ -122,7 +128,7 @@ function processRanking(res,results){
           if(rankingTmp[obj]["gamesWon"] == 0 && rankingTmp[obj]["gamesLost"] == 0){
                rankingTmp[obj]["level"] = 0;
           }else{
-               rankingTmp[obj]["level"] = rankingTmp[obj]["gamesWon"]/(rankingTmp[obj]["gamesWon"]+rankingTmp[obj]["gamesLost"]);
+               rankingTmp[obj]["level"] = 100*rankingTmp[obj]["gamesWon"]/(rankingTmp[obj]["gamesWon"]+rankingTmp[obj]["gamesLost"]);
           }
      }
      i=0;
@@ -154,7 +160,6 @@ function processRanking(res,results){
           Game.getByName(name,sendBack,res);
      })
      app.get('/api/gamesInfosFor/:name',function(req,res){
-          console.log("AQUI");
           var name = req.params.name;
           Game.getInfosByName(name,sendBack,res);
      });
@@ -163,5 +168,21 @@ function processRanking(res,results){
           var name2 = req.params.name2;
           Game.getGamesInfosByDuel(name1,name2,sendBack,res);
      });
+/*     app.get('/login',function(req,res){
+          if(!req.query.username || !req.query.password){
+               res.send('login failed');
+          }else if(req.query.username === "rdf" || req.query.password === "vidaloka69"){
+               req.session.user = "rdf";
+               req.session.admin = true;
+               res.send("login success");
+          }
+     })
+     app.get('/logout', function(req,res){
+          req.session.destroy();
+          res.send("logout success");
+     })
+     app.get('/test',auth,function(req,res){
+          res.send("LOGIN");
+     })*/
      app.get('*',routes.index);
 };

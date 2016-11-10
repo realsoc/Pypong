@@ -6,6 +6,13 @@
 // Demonstrate how to register services
 // In this case it is a simple value service.
 angular.module('PiPong.services', []).
+  /*factory('Communication', ['$rootScope',function($rootScope){
+    return {
+      gamesUpdate : function(subsciption){
+        
+      }
+    }
+  }]).*/
   factory('Games',function($http){
   	return {
   		get : function(){
@@ -16,7 +23,10 @@ angular.module('PiPong.services', []).
   		},
   		delete : function(id){
   			return $http.delete('/api/games/'+id);
-  		}
+  		},
+      getUninit : function(){
+        return $http.get('/api/games/uninitGames');
+      }
   	}}).
   	factory('Players',function($http){
   	return {

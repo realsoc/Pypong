@@ -4,12 +4,12 @@ div(class="container" ng-controller="PlayerCtrl")
    div(class="row")
       div(class="form-group col-xs-6")
         label(class="col-sm-6 control-label" for="player1Name") Player 1
-        select(ng-init="playerInput.player1 = players[0]" ng-options="player.name for player in players" id="player1Name" class="form-control" ng-model="playerInput.player1")
-          option Select player
+        select(ng-init="playerInput.player1 = data.players[0]" ng-options="player.name for player in data.players" id="player1Name" class="form-control" ng-model="playerInput.player1")
+          option(value="") Select Player
       div(class="form-group col-xs-6")
         label(class="col-sm-6 control-label" for="player2Name") Player 2
-        select(ng-init="playerInput.player1 = players[0]" class="form-control" id="player2Name" ng-model="playerInput.player2" ng-options="player.name for player in players")
-          option Select
+        select(ng-init="playerInput.player1 = data.players[0]" class="form-control" id="player2Name" ng-model="playerInput.player2" ng-options="player.name for player in data.players")
+          option(value="") Select Player
   div(class="table-responsive col-xs-6")
     table(class="table")
       thead
@@ -21,8 +21,9 @@ div(class="container" ng-controller="PlayerCtrl")
           th Player 2
           th Date
       tbody
-        tr(ng-repeat="game in games")
-          th {{game.number}}
+        tr(ng-repeat="game in data.games")
+          th(ng-if="game.number") {{game.number}}
+          th(ng-if="!game.number") {{$index}}
           td {{game.player1}}
           td {{game.sPlayer1}}
           td {{game.sPlayer2}}
@@ -40,31 +41,31 @@ div(class="container" ng-controller="PlayerCtrl")
       tbody
         tr
           th Games Played
-          td {{infos.6GP}}
-          td {{infos.11GP}}
-          td {{infos.21GP}}
-          td {{infos.0GP}}
+          td {{data.infos.6GP}}
+          td {{data.infos.11GP}}
+          td {{data.infos.21GP}}
+          td {{data.infos.0GP}}
         tr
           th Games Won
-          td {{infos.6GW}}
-          td {{infos.11GW}}
-          td {{infos.21GW}}
-          td {{infos.0GW}}
+          td {{data.infos.6GW}}
+          td {{data.infos.11GW}}
+          td {{data.infos.21GW}}
+          td {{data.infos.0GW}}
         tr
           th Games Lost
-          td {{infos.6GL}}
-          td {{infos.11GL}}
-          td {{infos.21GL}}
-          td {{infos.0GL}}
+          td {{data.infos.6GL}}
+          td {{data.infos.11GL}}
+          td {{data.infos.21GL}}
+          td {{data.infos.0GL}}
         tr
           th Points Scored
-          td {{infos.6PS}}
-          td {{infos.11PS}}
-          td {{infos.21PS}}
-          td {{infos.0PS}}
+          td {{data.infos.6PS}}
+          td {{data.infos.11PS}}
+          td {{data.infos.21PS}}
+          td {{data.infos.0PS}}
         tr
           th Points Lost
-          td {{infos.6PL}}
-          td {{infos.11PL}}
-          td {{infos.21PL}}
-          td {{infos.0PL}}
+          td {{data.infos.6PL}}
+          td {{data.infos.11PL}}
+          td {{data.infos.21PL}}
+          td {{data.infos.0PL}}
