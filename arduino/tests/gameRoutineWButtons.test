@@ -1,0 +1,148 @@
+INPUT : Less Pressed											// Come from wrong initial state for the buttons 
+TODO : Game number Init 										// Missing STATE, from bad test 							
+STATE : Number Request Send
+TODO : Game number send
+STATE : Number Request Receive
+TODO : Game number receive
+STATE : Number Request Check
+TODO : Checking number received
+Number ok
+STATE : Choose Number
+INPUT : Plus Pressed
+VAR : gameNumber = 1
+INPUT : Plus Pressed
+VAR : gameNumber = 2
+INPUT : Plus Pressed
+VAR : gameNumber = 3
+INPUT : Less Pressed
+VAR : gameNumber = 2
+INPUT : Switch Pressed
+VAR : gameNumber = 3
+INPUT : Switch Pressed
+VAR : gameNumber = 4
+INPUT : Next Pressed
+VAR : gameNumber = 4
+STATE : Choose Type
+INPUT : Plus Pressed
+VAR : gameType = 11
+INPUT : Plus Pressed
+VAR : gameType = 21
+INPUT : Plus Pressed
+VAR : gameType = 6
+INPUT : Switch Pressed
+VAR : gameType = 11
+INPUT : Next Pressed
+Type choosed, passing
+STATE : Random Serve
+AR : serve = 														// Come from missing cast in random serve, modified
+STATE : Choose Serve
+INPUT : Plus Pressed
+VAR : serve = -1
+INPUT : Plus Pressed
+VAR : serve = 1
+INPUT : Less Pressed
+VAR : serve = -1
+INPUT : Less Pressed
+VAR : serve = 1
+INPUT : Plus Pressed
+VAR : serve = -1
+INPUT : Next Pressed
+Starting Game
+STATE : Game Start
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 1
+11pts game, player 1 1 - 0 player 2. Next serve :player1
+INPUT : Less Pressed
+VAR : scorePlayer1 = 0
+11pts game, player 1 0 - 0 player 2. Next serve :player1
+INPUT : Switch Pressed
+VAR : confScore = 1
+11pts game, player 1 0 - 0 player 2. Next serve :player1
+INPUT : Switch Pressed
+VAR : confScore = -1
+11pts game, player 1 0 - 0 player 2. Next serve :player1
+INPUT : Switch Pressed
+VAR : confScore = 1
+11pts game, player 1 0 - 0 player 2. Next serve :player1
+INPUT : Switch Pressed
+VAR : confScore = -1
+11pts game, player 1 0 - 0 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 1
+11pts game, player 1 1 - 0 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 2
+11pts game, player 1 2 - 0 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 3
+11pts game, player 1 3 - 0 player 2. Next serve :player1
+INPUT : Switch Pressed
+VAR : confScore = 1
+11pts game, player 1 3 - 0 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 1
+11pts game, player 1 3 - 1 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 2
+11pts game, player 1 3 - 2 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 3
+11pts game, player 1 3 - 3 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 4
+11pts game, player 1 3 - 4 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 5
+11pts game, player 1 3 - 5 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 6
+11pts game, player 1 3 - 6 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 7
+11pts game, player 1 3 - 7 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer2 = 8
+11pts game, player 1 3 - 8 player 2. Next serve :player1
+INPUT : Switch Pressed
+VAR : confScore = -1
+11pts game, player 1 3 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 4
+11pts game, player 1 4 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 5
+11pts game, player 1 5 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 6
+11pts game, player 1 6 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 7
+11pts game, player 1 7 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 8
+11pts game, player 1 8 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 9
+11pts game, player 1 9 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 10
+11pts game, player 1 10 - 8 player 2. Next serve :player1
+INPUT : Plus Pressed
+VAR : scorePlayer1 = 11
+11pts game, player 1 11 - 8 player 2. Next serve :player1
+INPUT : Next Pressed
+Game over
+STATE : Send Result Init
+TODO : Send result init
+STATE : Send Result Send
+TODO : Send result send
+STATE : Send Result Receive
+TODO : Send result receive
+STATE : Send Result Check
+TODO : Send result check
+result ok
+STATE : Send Persist
+TODO : Send persist
+STATE : Number Request Init
+TODO : Game number init
+STATE : Number Request Send
