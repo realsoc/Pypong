@@ -27,6 +27,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.realsoc.pipong.Constants.PLAYERS_ACTIVITY_NAME;
+import static com.realsoc.pipong.Constants.REMOTE_SERVER_ADDRESS;
 
 /**
  * Created by Hugo on 03/01/2017.
@@ -82,7 +83,7 @@ public class PlayersActivity extends AppCompatActivity {
                         Log.d(PLAYERS_ACTIVITY_NAME,req);
                         RequestBody body = RequestBody.create(JSON,req);
                         Request request = new Request.Builder()
-                                .url("http://192.168.1.82:8080/api/players")
+                                .url(REMOTE_SERVER_ADDRESS+"/api/players")
                                 .post(body)
                                 .build();
                         Log.d(PLAYERS_ACTIVITY_NAME,body.toString());

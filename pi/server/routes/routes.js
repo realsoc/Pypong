@@ -44,27 +44,43 @@ module.exports = function(app) {
      app.post('/api/games',function(req,res){
           var number,player1,player2,type,sPlayer1,sPlayer2;
           var newGame = new GameModel();
+          console.log(req);
           newGame._id = req.body._id;
           if(req.body._id != null)
                newGame._id = req.body._id;
           if(req.body.player1 != null){
-               newGame.player1 = req.body.player1.name;
+               if(req.body.player1.name)
+                    newGame.player1 = req.body.player1.name
+               else
+                    newGame.player1 = req.body.player1;
                if(!Player.testPlayer(newGame.player1)){
                     sendBack(res,"{'result':'Player 1 does not exists'");
                     return;
+               }else{
+                    console.log("P1 : "+newGame.player1);
                }
+
           }
           if(req.body.player2 != null){
-               newGame.player2 = req.body.player2.name;
+               if(req.body.player2.name)
+                    newGame.player2 = req.body.player2.name
+               else
+                    newGame.player2 = req.body.player2;
                if(!Player.testPlayer(newGame.player2)){
                     sendBack(res,"{'result':'Player 2 does not exists'");
                     return;
+               }else{
+                    console.log("P2 : "+newGame.player2);
                }
           }
-          if(req.body.sPlayer2 != null)
-               newGame.sPlayer2 = req.body.sPlayer2;
-          if(req.body.sPlayer1 != null)
-               newGame.sPlayer1 = req.body.sPlayer1;
+          if(req.body.sPlayer2 != null){
+                    newGame.sPlayer2 = req.body.sPlayer2;
+                    console.log("ScoreP2 : "+newGame.sPlayer2);
+               }
+          if(req.body.sPlayer1 != null){
+                    newGame.sPlayer1 = req.body.sPlayer1;
+                    console.log("ScoreP1 : "+newGame.sPlayer1);
+               }
           if(req.body.number != null)
                newGame.number = req.body.number;
           if(req.body.date != null){

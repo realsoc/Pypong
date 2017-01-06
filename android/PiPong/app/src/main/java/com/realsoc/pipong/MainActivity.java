@@ -20,15 +20,16 @@ import okhttp3.Response;
 import static com.realsoc.pipong.Constants.CONFIGURATION_ACTIVITY_ID;
 import static com.realsoc.pipong.Constants.GAME_ACTIVITY_ID;
 import static com.realsoc.pipong.Constants.PLAYERS_ACTIVITY_ID;
+import static com.realsoc.pipong.Constants.REMOTE_SERVER_ADDRESS;
 
 public class MainActivity extends AppCompatActivity {
 
     public void addPlayer(View v){
-        new GetPlayersAndGoTask(this,PLAYERS_ACTIVITY_ID).execute("http://192.168.1.82:8080/api/players");
+        new GetPlayersAndGoTask(this,PLAYERS_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/players");
     }
 
     public void newGame(View v){
-        new GetPlayersAndGoTask(this,GAME_ACTIVITY_ID).execute("http://192.168.1.82:8080/api/players");
+        new GetPlayersAndGoTask(this,GAME_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/players");
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
