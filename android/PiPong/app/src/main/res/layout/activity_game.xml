@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app.srcCompat="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".45"
+        android:background="#388e3c"
+        >
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <android.support.design.widget.FloatingActionButton
+            android:onClick="player1Less"
+            app:backgroundTint="#8BC34A"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            app:srcCompat="@drawable/ic_neg_1"
+            app:fabSize="normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+<ImageView
+    android:onClick="player1Plus"
+    android:scaleX="0.5"
+    android:scaleY="0.5"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:srcCompat="@drawable/ic_plus_1"/>
+        <TextView
+            android:id="@+id/player1_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/player_1"
+            android:gravity="start|bottom"
+            android:textSize="20sp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="#ffffff"/>
+        </FrameLayout>
+    </LinearLayout>
+
+<LinearLayout
+    android:background="@color/light_green"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0.1"
+    android:gravity="center">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="0.8">
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/player1_score"
+        android:textColor="#ffffff"
+        android:background="@color/light_green"
+        android:textSize="40sp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15"/>
+    <TextView
+        android:textColor="#ffffff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="40sp"
+        android:text=" - " />
+
+    <TextView
+        android:id="@+id/player2_score"
+        android:textColor="#ffffff"
+        android:background="@color/light_green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:text="12" />
+
+    <ImageView
+        android:onClick="sendData"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_backup_24dp"
+        android:layout_gravity="center" />
+</LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".45"
+        android:background="#388e3c"
+        >
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <android.support.design.widget.FloatingActionButton
+            android:onClick="player2Less"
+            app:backgroundTint="#8BC34A"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            app:srcCompat="@drawable/ic_neg_1"
+            app:fabSize="normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+            <ImageView
+                android:onClick="player2Plus"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/ic_plus_1"
+                android:scaleX="0.5"
+                android:scaleY="0.5"  />
+        <TextView
+            android:id="@+id/player2_name"
+            android:textColor="#ffffff"
+            android:text="Player 2"
+            android:gravity="end|top"
+            android:textSize="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+</FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

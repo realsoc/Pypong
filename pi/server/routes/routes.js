@@ -30,6 +30,7 @@ module.exports = function(app) {
           Player.getAll(sendBack,res);
      });
      app.post('/api/players',function(req,res){
+          console.log(req.body);
           Player.addPlayer(req.body.name);
           sendBack(res,"{'result':'ok'}");
      });

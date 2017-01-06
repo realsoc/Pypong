@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PiPong</string>
+    <string name="add_player">Add Player</string>
+    <string name="new_game">New Game</string>
+    <string name="player_1">Player 1</string>
+    <string name="player_2">Player 2</string>
+    <string name="cancel">Cancel</string>
+    <string name="Ok">Ok</string>
+    <string name="configuration_title">Game Configuration</string>
+    <string name="separator_score">-</string>
+    <string name="game_type">Game Type</string>
+</resources>
