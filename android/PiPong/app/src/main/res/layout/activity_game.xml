@@ -7,26 +7,37 @@
     android:layout_height="match_parent">
 
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight=".45"
-        android:background="#388e3c"
-        >
         <FrameLayout
+            android:background="#388e3c"
+            android:layout_weight=".45"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <android.support.design.widget.FloatingActionButton
-            android:onClick="player1Less"
-            app:backgroundTint="#8BC34A"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            app:srcCompat="@drawable/ic_neg_1"
-            app:fabSize="normal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content">
+            <RelativeLayout
+
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.FloatingActionButton
+                    android:onClick="player1Less"
+                    app:backgroundTint="#8BC34A"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/ic_neg_1"
+                    app:fabSize="normal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+                <ImageView
+                    android:id="@+id/serveP1"
+                    android:visibility="visible"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@mipmap/ic_serve_white" />
+            </RelativeLayout>
+
 <ImageView
     android:onClick="player1Plus"
     android:scaleX="0.5"
@@ -45,79 +56,88 @@
             android:layout_marginLeft="16dp"
             android:textColor="#ffffff"/>
         </FrameLayout>
-    </LinearLayout>
 
-<LinearLayout
+<FrameLayout
     android:background="@color/light_green"
     android:layout_width="match_parent"
+
     android:layout_height="wrap_content"
-    android:layout_weight="0.1"
-    android:gravity="center">
+    android:layout_weight=".1"
+    android:gravity="center_vertical"
+    android:elevation="0dp">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="0.8">
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/player1_score"
+            android:textColor="#ffffff"
+            android:background="@color/light_green"
+            android:textSize="40sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15"/>
+        <TextView
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:text=" - " />
+
+        <TextView
+            android:id="@+id/player2_score"
+            android:textColor="#ffffff"
+            android:background="@color/light_green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:text="12" />
 
     </LinearLayout>
-    <TextView
-        android:id="@+id/player1_score"
-        android:textColor="#ffffff"
-        android:background="@color/light_green"
-        android:textSize="40sp"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="15"/>
-    <TextView
-        android:textColor="#ffffff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="40sp"
-        android:text=" - " />
 
-    <TextView
-        android:id="@+id/player2_score"
-        android:textColor="#ffffff"
-        android:background="@color/light_green"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="40sp"
-        android:text="12" />
 
     <ImageView
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
+        android:scaleY="2"
+        android:scaleX="2"
         android:onClick="sendData"
-        android:layout_marginLeft="60dp"
-        android:layout_marginRight="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_backup_24dp"
-        android:layout_gravity="center" />
-</LinearLayout>
+        android:layout_gravity="end|center_vertical" />
+</FrameLayout>
 
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight=".45"
-        android:background="#388e3c"
-        >
         <FrameLayout
+            android:layout_weight=".45"
+            android:background="#388e3c"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <android.support.design.widget.FloatingActionButton
-            android:onClick="player2Less"
-            app:backgroundTint="#8BC34A"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            app:srcCompat="@drawable/ic_neg_1"
-            app:fabSize="normal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.FloatingActionButton
+                    android:onClick="player2Less"
+                    app:backgroundTint="#8BC34A"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/ic_neg_1"
+                    app:fabSize="normal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+                <TextView
+                    android:id="@+id/player2_name"
+                    android:textColor="#ffffff"
+                    android:text="Player 2"
+                    android:gravity="end|top"
+                    android:textSize="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+        </RelativeLayout>
+
 
             <ImageView
                 android:onClick="player2Plus"
@@ -126,17 +146,16 @@
                 app:srcCompat="@drawable/ic_plus_1"
                 android:scaleX="0.5"
                 android:scaleY="0.5"  />
-        <TextView
-            android:id="@+id/player2_name"
-            android:textColor="#ffffff"
-            android:text="Player 2"
-            android:gravity="end|top"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <ImageView
+                android:id="@+id/serveP2"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="bottom|end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/ic_serve_white"/>
+
 </FrameLayout>
-    </LinearLayout>
+
 
 </LinearLayout>

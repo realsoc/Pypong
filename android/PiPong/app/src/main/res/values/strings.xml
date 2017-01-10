@@ -9,4 +9,8 @@
     <string name="configuration_title">Game Configuration</string>
     <string name="separator_score">-</string>
     <string name="game_type">Game Type</string>
+    <string name="players_activity">Add Players</string>
+    <string name="main_activity">PiPong</string>
+    <string name="configuration_activity">Configuration</string>
+    <string name="GameActivity">Playing</string>
 </resources>

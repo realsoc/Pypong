@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +35,10 @@ public class GameActivity extends AppCompatActivity{
     private String player1;
     private String player2;
     private int type;
+    private int firstServe;
     private int scoreP1 = 0;
     private int scoreP2 = 0;
+    private ImageView serveP1, serveP2;
     private TextView scoreP1TextView;
     private TextView scoreP2TextView;
 
@@ -55,6 +58,10 @@ public class GameActivity extends AppCompatActivity{
         this.player1 = extras.getString("player1");
         this.player2 = extras.getString("player2");
         this.type = extras.getInt("type");
+        this.firstServe = extras.getInt("serve");
+        serveP1 = (ImageView) findViewById(R.id.serveP1);
+        serveP2 = (ImageView) findViewById(R.id.serveP2);
+        updateServeShow();
         scoreP1TextView = (TextView) findViewById(R.id.player1_score);
         scoreP2TextView = (TextView) findViewById(R.id.player2_score);
         scoreP1TextView.setText(Integer.toString(scoreP1));
@@ -62,28 +69,72 @@ public class GameActivity extends AppCompatActivity{
         ((TextView) findViewById(R.id.player1_name)).setText(player1);
         ((TextView) findViewById(R.id.player2_name)).setText(player2);
     }
+
+    private void updateServeShow() {
+        if(type == 6|| type == 11){
+            if((scoreP1+scoreP2)%4<2){
+                if(firstServe == 0){
+                    serveP1.setVisibility(View.VISIBLE);
+                    serveP2.setVisibility(View.INVISIBLE);
+                }else{
+                    serveP1.setVisibility(View.INVISIBLE);
+                    serveP2.setVisibility(View.VISIBLE);
+                }
+            }else{
+                if(firstServe == 1){
+                    serveP1.setVisibility(View.VISIBLE);
+                    serveP2.setVisibility(View.INVISIBLE);
+                }else{
+                    serveP1.setVisibility(View.INVISIBLE);
+                    serveP2.setVisibility(View.VISIBLE);
+                }
+            }
+        }else{
+            if((scoreP1+scoreP2)%10<5){
+                if(firstServe == 0){
+                    serveP1.setVisibility(View.VISIBLE);
+                    serveP2.setVisibility(View.INVISIBLE);
+                }else{
+                    serveP1.setVisibility(View.INVISIBLE);
+                    serveP2.setVisibility(View.VISIBLE);
+                }
+            }else{
+                if(firstServe == 1){
+                    serveP1.setVisibility(View.VISIBLE);
+                    serveP2.setVisibility(View.INVISIBLE);
+                }else{
+                    serveP1.setVisibility(View.INVISIBLE);
+                    serveP2.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
     public void player1Plus(View v){
         scoreP1++;
+        updateServeShow();
         scoreP1TextView.setText(Integer.toString(scoreP1));
     }
     public void player2Plus(View v){
         scoreP2++;
+        updateServeShow();
         scoreP2TextView.setText(Integer.toString(scoreP2));
     }
     public void player1Less(View v){
         if(scoreP1>0){
             scoreP1--;
+            updateServeShow();
             scoreP1TextView.setText(Integer.toString(scoreP1));
         }
     }
     public void player2Less(View v){
         if(scoreP2>0){
             scoreP2--;
+            updateServeShow();
             scoreP2TextView.setText(Integer.toString(scoreP2));
         }
     }
     public void sendData(View v){
-       //TODO : send game data to server
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(GameActivity.this);
         alertDialog.setTitle("Confirm");
         alertDialog.setMessage("You really want to persist datas");
