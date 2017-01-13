@@ -1,34 +1,16 @@
 package com.realsoc.pipong;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import static com.realsoc.pipong.Constants.PLAYERS_ACTIVITY_NAME;
-import static com.realsoc.pipong.Constants.REMOTE_SERVER_ADDRESS;
 
 /**
  * Created by Hugo on 03/01/2017.
@@ -42,10 +24,12 @@ public class PlayersActivity extends AppCompatActivity {
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     private OkHttpClient client = new OkHttpClient();
+    private PlayerListFragment playerListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_players);
         Bundle extras = getIntent().getExtras();
         if(savedInstanceState != null){
             this.players = savedInstanceState.getStringArrayList("players");
@@ -53,8 +37,19 @@ public class PlayersActivity extends AppCompatActivity {
         }else{
             this.players = extras.getStringArrayList("players");
         }
+        playerListFragment = PlayerListFragment.newInstance(players, client);
 
-        setContentView(R.layout.activity_players);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.players_frame_container, playerListFragment);
+        //transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+/*
+
         mRecyclerView = (RecyclerView) findViewById(R.id.player_recyclerview);
 
         // use this setting to improve performance if you know that changes
@@ -67,8 +62,8 @@ public class PlayersActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
         // specify an adapter (see also next example)
         mAdapter = new MyAdapter(this.players);
-        mRecyclerView.setAdapter(mAdapter);
-    }
+        mRecyclerView.setAdapter(mAdapter);*/
+    }/*
     public void addPlayer(View v){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(PlayersActivity.this);
         alertDialog.setTitle("Player");
@@ -113,7 +108,7 @@ public class PlayersActivity extends AppCompatActivity {
                                                 e.printStackTrace();
                                             }
                                         }
-                                    });*/
+                                    });*//*
                                 }
                             });
 
@@ -129,15 +124,17 @@ public class PlayersActivity extends AppCompatActivity {
                 });
 
         alertDialog.show();
+    }*/
+    public void addPlayer(View v){
+        playerListFragment.addPlayer();
     }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putStringArrayList("players",this.players);
         super.onSaveInstanceState(outState);
 
     }
-
+    /*
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private ArrayList<String> mDataset;
 
@@ -193,4 +190,5 @@ public class PlayersActivity extends AppCompatActivity {
             return mDataset.size();
         }
     }
+    */
 }
