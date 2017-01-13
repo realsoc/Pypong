@@ -55,15 +55,17 @@ public class GameActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
         if(savedInstanceState!= null){
             scoreP1 = savedInstanceState.getInt("scoreP1");
             scoreP2 = savedInstanceState.getInt("scoreP2");
+            this.type = savedInstanceState.getInt("type");
+        }else{
+            this.type = extras.getInt("type");
         }
         setContentView(R.layout.activity_game);
-        Bundle extras = getIntent().getExtras();
         this.player1 = extras.getString("player1");
         this.player2 = extras.getString("player2");
-        this.type = extras.getInt("type");
         this.firstServe = extras.getInt("serve");
         serveP1 = (ImageView) findViewById(R.id.serveP1);
         serveP2 = (ImageView) findViewById(R.id.serveP2);
@@ -294,6 +296,7 @@ public class GameActivity extends AppCompatActivity{
 
         outState.putInt("scoreP1",scoreP1);
         outState.putInt("scoreP2",scoreP2);
+        outState.putInt("type",type);
         super.onSaveInstanceState(outState);
     }
 }

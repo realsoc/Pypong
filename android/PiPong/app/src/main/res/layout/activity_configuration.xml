@@ -42,6 +42,7 @@
         android:prompt="@string/player_1"
         android:id="@+id/player1_spinner"></Spinner>
         <RadioButton
+            android:layout_alignBaseline="@id/player1_spinner"
             android:id="@+id/p1_serve_radio"
             android:layout_marginRight="30dp"
             android:layout_alignParentRight="true"
@@ -67,6 +68,7 @@
             ></Spinner>
 
         <RadioButton
+            android:layout_alignBaseline="@id/player2_spinner"
             android:id="@+id/p2_serve_radio"
             android:layout_marginRight="30dp"
             android:layout_alignParentRight="true"
@@ -75,9 +77,11 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/random"
             android:layout_marginLeft="5dp"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
@@ -86,6 +90,7 @@
         <RadioButton
             android:id="@+id/random_serve_radio"
             android:layout_marginRight="30dp"
+            android:layout_alignBaseline="@id/random"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

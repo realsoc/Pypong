@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +47,12 @@ public class PlayersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        this.players = extras.getStringArrayList("players");
+        if(savedInstanceState != null){
+            this.players = savedInstanceState.getStringArrayList("players");
+            Log.d("DEBUG",Integer.toString(this.players.size()));
+        }else{
+            this.players = extras.getStringArrayList("players");
+        }
 
         setContentView(R.layout.activity_players);
         mRecyclerView = (RecyclerView) findViewById(R.id.player_recyclerview);
@@ -58,7 +64,7 @@ public class PlayersActivity extends AppCompatActivity {
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
+        mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
         // specify an adapter (see also next example)
         mAdapter = new MyAdapter(this.players);
         mRecyclerView.setAdapter(mAdapter);
@@ -124,6 +130,14 @@ public class PlayersActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList("players",this.players);
+        super.onSaveInstanceState(outState);
+
+    }
+
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private ArrayList<String> mDataset;
 
@@ -132,10 +146,19 @@ public class PlayersActivity extends AppCompatActivity {
         // you provide access to all the views for a data item in a view holder
         public class ViewHolder extends RecyclerView.ViewHolder {
             // each data item is just a string in this case
-            public TextView mTextView;
-            public ViewHolder(TextView v) {
+            private TextView mTextView;
+            private ImageView avatar;
+            public ViewHolder(View v) {
                 super(v);
-                mTextView = v;
+                mTextView = (TextView) v.findViewById(R.id.name_line);
+                avatar = (ImageView) v.findViewById(R.id.avatar);
+            }
+            public String getText(){
+                return mTextView.getText().toString();
+            }
+            public Void setText(String text){
+                mTextView.setText(text);
+                return null;
             }
         }
 
@@ -143,8 +166,6 @@ public class PlayersActivity extends AppCompatActivity {
         public MyAdapter(ArrayList<String> myDataset) {
             mDataset = myDataset;
         }
-
-        // Create new views (invoked by the layout manager)
         @Override
         public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                        int viewType) {
@@ -153,7 +174,7 @@ public class PlayersActivity extends AppCompatActivity {
                     .inflate(R.layout.playerlist_item, parent, false);
             // set the view's size, margins, paddings and layout parameters
 
-            ViewHolder vh = new ViewHolder((TextView)v);
+            ViewHolder vh = new ViewHolder(v);
             return vh;
         }
 
@@ -162,7 +183,7 @@ public class PlayersActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder holder, int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
-            holder.mTextView.setText(mDataset.get(position));
+            holder.setText(mDataset.get(position));
 
         }
 
