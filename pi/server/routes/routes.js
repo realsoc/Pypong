@@ -17,7 +17,9 @@ Date.prototype.toDateInputValue = (function() {
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
     return local.toJSON().slice(0,10);
 });
-
+function putInResult(res,data){
+     res.result = data;
+}
 function sendBack(res,data){
      res.json(data);
 }
@@ -159,13 +161,18 @@ function processRanking(res,results){
      });
      sendBack(res,ranking);
 }
+     app.get('/api/test', function(req,res){
+          console.log("HELLO");
+     });
      app.get('/api/ranking',function(req,res){
           Game.getRanking(processRanking,res);
      });
      app.get('/api/gamesInfos',function(req,res){
           Game.getGamesInfos(sendBack,res);
      });
-
+     app.get('/api/getAll', function(req,res){
+          Game.getAllInfos(sendBack,res);
+     });
      // PLAYER
      app.get('/api/duel/:name1/:name2',function(req,res){
           var name1 = req.params.name1;

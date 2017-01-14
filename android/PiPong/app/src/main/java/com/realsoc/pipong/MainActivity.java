@@ -9,6 +9,7 @@ import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,13 +63,54 @@ public class MainActivity extends AppCompatActivity {
         protected void onProgressUpdate(Integer... progress) {
             //setProgressPercent(progress[0]);
         }
+        /*
         private ArrayList<String> createPlayerObjFromString(String strObj){
             ArrayList<String> ret= new ArrayList<String>();
             JSONArray players = null;
+            String
             try {
                 players = new JSONArray(strObj);
                 for(int i=0;i<players.length();i++){
                     ret.add(players.getJSONObject(i).getString("name"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return ret;
+        }*/
+        private ArrayList<PlayerModel> createPlayerObjFromString(String strObj){
+            ArrayList<PlayerModel> ret= new ArrayList<PlayerModel>();
+            JSONObject obj = null;
+            JSONArray players = null;
+            PlayerModel currentPlayerModel = null;
+            String currentName = "";
+            try {
+                obj = new JSONObject(strObj);
+                players = obj.getJSONArray("players");
+                for(int i=0;i<players.length();i++){
+                    currentName = players.getJSONObject(i).getString("name");
+                    currentPlayerModel = new PlayerModel(currentName);
+                    currentPlayerModel.setGameCount(obj.getJSONObject(currentName));
+                    ret.add(currentPlayerModel);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return ret;
+        }
+        private ArrayList<GameModel> createGameObjFromString(String strObj){
+            ArrayList<GameModel> ret= new ArrayList<GameModel>();
+            JSONObject obj;
+            JSONArray games ;
+            GameModel currentGameModel;
+            try {
+                obj = new JSONObject(strObj);
+                games = obj.getJSONArray("games");
+                for(int i=0;i<games.length();i++){
+                    currentGameModel = new GameModel(games.getJSONObject(i));
+                    ret.add(currentGameModel);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -88,9 +130,12 @@ public class MainActivity extends AppCompatActivity {
                     activityIntent = new Intent(context,ConfigurationActivity.class);
                     break;
             }
-            ArrayList<String> players = createPlayerObjFromString(result);
+            //ArrayList<String> players = createPlayerObjFromString(result);
+            ArrayList<PlayerModel> players = createPlayerObjFromString(result);
+            ArrayList<GameModel> games = createGameObjFromString(result);
             Bundle mBundle = new Bundle();
-            mBundle.putStringArrayList("players",players);
+            mBundle.putParcelableArrayList("players",players);
+            mBundle.putParcelableArrayList("games",games);
             activityIntent.putExtras(mBundle);
             startActivity(activityIntent);
             //Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();

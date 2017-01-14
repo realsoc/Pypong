@@ -34,15 +34,20 @@ import static com.realsoc.pipong.Constants.REMOTE_SERVER_ADDRESS;
 
 public class PlayerListFragment extends ListFragment {
 
-    private ArrayList<String> players;
+    private ArrayList<PlayerModel> players;
+    private ArrayList<String> playersStringList;
+    private ArrayList<GameModel> games;
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     private OkHttpClient client;
 
-    public static PlayerListFragment newInstance(ArrayList<String> players,OkHttpClient client){
+    public static PlayerListFragment newInstance(ArrayList<PlayerModel> players,
+                                                 ArrayList<GameModel> games,
+                                                 OkHttpClient client){
         PlayerListFragment plF = new PlayerListFragment();
         Bundle args = new Bundle();
-        args.putStringArrayList("players", players);
+        args.putParcelableArrayList("players", players);
+        args.putParcelableArrayList("games", games);
         plF.setArguments(args);
         plF.setClient(client);
         return plF;
@@ -53,11 +58,25 @@ public class PlayerListFragment extends ListFragment {
 
     }
     public void setArguments(Bundle args){
-        if(args.containsKey("players")){
-            this.players = args.getStringArrayList("players");
+        if(args.containsKey("players")) {
+            this.players = args.getParcelableArrayList("players");
+            this.playersStringList = createStrListFromObjList(this.players);
         }else{
             Log.d("BUG", "does not have players array list");
         }
+        if(args.containsKey("games")){
+            this.games = args.getParcelableArrayList("games");
+        }else{
+            Log.d("BUG", "does not have games array list");
+        }
+    }
+
+    private ArrayList<String> createStrListFromObjList(ArrayList<PlayerModel> players) {
+        ArrayList<String> ret = new ArrayList<>();
+        for(PlayerModel player : players){
+            ret.add(player.getName());
+        }
+        return ret;
     }
 
     @Nullable
@@ -70,10 +89,10 @@ public class PlayerListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState != null){
-            players = savedInstanceState.getStringArrayList("players");
+            playersStringList = savedInstanceState.getStringArrayList("playersStringList");
         }
         final ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, players);
+                android.R.layout.simple_list_item_1, playersStringList);
 
         setListAdapter(aa);
     }
@@ -95,7 +114,7 @@ public class PlayerListFragment extends ListFragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String nPlayerName = input.getText().toString();
-                        players.add(nPlayerName);
+                        playersStringList.add(nPlayerName);
                         String req = "{\"name\":\""+nPlayerName+"\"}";
                         Log.d(PLAYERS_ACTIVITY_NAME,req);
                         RequestBody body = RequestBody.create(JSON,req);
@@ -145,7 +164,8 @@ public class PlayerListFragment extends ListFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("players",players);
+        outState.putStringArrayList("playersStringList",playersStringList);
+
         super.onSaveInstanceState(outState);
     }
 }

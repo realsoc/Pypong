@@ -18,7 +18,8 @@ import okhttp3.OkHttpClient;
 
 public class PlayersActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
-    private ArrayList<String> players;
+    private ArrayList<PlayerModel> players;
+    private ArrayList<GameModel> games;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private static final MediaType JSON
@@ -32,12 +33,14 @@ public class PlayersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_players);
         Bundle extras = getIntent().getExtras();
         if(savedInstanceState != null){
-            this.players = savedInstanceState.getStringArrayList("players");
+            this.players = savedInstanceState.getParcelableArrayList("players");
+            this.games = savedInstanceState.getParcelableArrayList("games");
             Log.d("DEBUG",Integer.toString(this.players.size()));
         }else{
-            this.players = extras.getStringArrayList("players");
+            this.players = extras.getParcelableArrayList("players");
+            this.games = extras.getParcelableArrayList("games");
         }
-        playerListFragment = PlayerListFragment.newInstance(players, client);
+        playerListFragment = PlayerListFragment.newInstance(players,games, client);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -130,7 +133,8 @@ public class PlayersActivity extends AppCompatActivity {
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("players",this.players);
+        outState.putParcelableArrayList("players",this.players);
+        outState.putParcelableArrayList("games",this.games);
         super.onSaveInstanceState(outState);
 
     }
