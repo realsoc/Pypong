@@ -26,11 +26,11 @@ import static com.realsoc.pipong.Constants.REMOTE_SERVER_ADDRESS;
 public class MainActivity extends AppCompatActivity {
 
     public void addPlayer(View v){
-        new GetPlayersAndGoTask(this,PLAYERS_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/players");
+        new GetPlayersAndGoTask(this,PLAYERS_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/getAll");
     }
 
     public void newGame(View v){
-        new GetPlayersAndGoTask(this,GAME_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/players");
+        new GetPlayersAndGoTask(this,GAME_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/getAll");
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

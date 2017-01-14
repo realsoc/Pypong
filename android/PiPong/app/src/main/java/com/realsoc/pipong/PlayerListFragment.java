@@ -54,13 +54,17 @@ public class PlayerListFragment extends ListFragment {
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d("PLF","OC");
+
         super.onCreate(savedInstanceState);
 
     }
     public void setArguments(Bundle args){
+        Log.d("PLF","SET ARGUMENTS");
         if(args.containsKey("players")) {
             this.players = args.getParcelableArrayList("players");
             this.playersStringList = createStrListFromObjList(this.players);
+            Log.d("PLF","SIZE PSL false : "+this.playersStringList.size());
         }else{
             Log.d("BUG", "does not have players array list");
         }
@@ -82,17 +86,25 @@ public class PlayerListFragment extends ListFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("PLF","OCV");
+
         return inflater.inflate(R.layout.fragment_players,container,false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.d("PLF","OAC");
+
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState != null){
-            playersStringList = savedInstanceState.getStringArrayList("playersStringList");
+            Log.d("PLF","savenotnull in OAC");
+
+            this.playersStringList = savedInstanceState.getStringArrayList("playersStringList");
+
+            Log.d("PLF","SIZE PSL true : "+this.playersStringList.size());
         }
         final ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, playersStringList);
+                android.R.layout.simple_list_item_1, this.playersStringList);
 
         setListAdapter(aa);
     }
@@ -113,8 +125,7 @@ public class PlayerListFragment extends ListFragment {
         alertDialog.setPositiveButton("Send",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        String nPlayerName = input.getText().toString();
-                        playersStringList.add(nPlayerName);
+                        final String nPlayerName = input.getText().toString();
                         String req = "{\"name\":\""+nPlayerName+"\"}";
                         Log.d(PLAYERS_ACTIVITY_NAME,req);
                         RequestBody body = RequestBody.create(JSON,req);
@@ -134,6 +145,12 @@ public class PlayerListFragment extends ListFragment {
                             @Override
                             public void onResponse(Call call, final Response response) throws IOException {
                                 Log.d(PLAYERS_ACTIVITY_NAME,response.body().string());
+                                if(response.code() == 201){
+                                    playersStringList.add(nPlayerName);
+                                    players.add(new PlayerModel(nPlayerName));
+                                }else if(response.code() == 202){
+                                    Toast.makeText(getContext(),"Player already exists", Toast.LENGTH_SHORT).show();
+                                }
                                     /*new Handler(Looper.getMainLooper()).post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -164,7 +181,11 @@ public class PlayerListFragment extends ListFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("playersStringList",playersStringList);
+        Log.d("PLF","OSIS");
+        outState.putStringArrayList("playersStringList",this.playersStringList);
+        outState.putParcelableArrayList("players",this.players);
+        outState.putParcelableArrayList("games",this.games);
+        Log.d("PLF","saving PSL size : "+this.playersStringList.size());
 
         super.onSaveInstanceState(outState);
     }

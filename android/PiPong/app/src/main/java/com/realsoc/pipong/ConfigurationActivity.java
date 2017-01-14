@@ -19,7 +19,8 @@ import static com.realsoc.pipong.Constants.SELECT_DIFFERENT_PLAYER;
  */
 
 public class ConfigurationActivity extends AppCompatActivity {
-    private ArrayList<String> players;
+    private ArrayList<PlayerModel> players;
+    private ArrayList<String> playersStrArrayList;
     private final ArrayList<Integer> gameType = new ArrayList<Integer>();
     private RadioButton p1, p2, random;
     public void initGameType(){
@@ -32,10 +33,11 @@ public class ConfigurationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initGameType();
         Bundle extras = getIntent().getExtras();
-        this.players = extras.getStringArrayList("players");
+        this.players = extras.getParcelableArrayList("players");
+        this.playersStrArrayList = createStrListFromObjList(this.players);
         setContentView(R.layout.activity_configuration);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_spinner_dropdown_item, players);
+                this, android.R.layout.simple_spinner_dropdown_item, playersStrArrayList);
         ArrayAdapter<Integer> adapterType = new ArrayAdapter<Integer>(
                 this, android.R.layout.simple_spinner_dropdown_item, gameType);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -74,6 +76,13 @@ public class ConfigurationActivity extends AppCompatActivity {
         player1.setAdapter(adapter);
         player2.setAdapter(adapter);
         type.setAdapter(adapterType);
+    }
+    private ArrayList<String> createStrListFromObjList(ArrayList<PlayerModel> players) {
+        ArrayList<String> ret = new ArrayList<>();
+        for(PlayerModel player : players){
+            ret.add(player.getName());
+        }
+        return ret;
     }
     public int getServe() {
         int ret;

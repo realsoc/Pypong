@@ -3,7 +3,6 @@ package com.realsoc.pipong;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
@@ -17,11 +16,8 @@ import okhttp3.OkHttpClient;
  */
 
 public class PlayersActivity extends AppCompatActivity {
-    private RecyclerView mRecyclerView;
     private ArrayList<PlayerModel> players;
     private ArrayList<GameModel> games;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     private OkHttpClient client = new OkHttpClient();
@@ -39,6 +35,7 @@ public class PlayersActivity extends AppCompatActivity {
         }else{
             this.players = extras.getParcelableArrayList("players");
             this.games = extras.getParcelableArrayList("games");
+            Log.d("oncreate PA","size players"+players.size()+" size games "+games.size());
         }
         playerListFragment = PlayerListFragment.newInstance(players,games, client);
 

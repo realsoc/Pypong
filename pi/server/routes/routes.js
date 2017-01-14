@@ -32,9 +32,7 @@ module.exports = function(app) {
           Player.getAll(sendBack,res);
      });
      app.post('/api/players',function(req,res){
-          console.log(req.body);
-          Player.addPlayer(req.body.name);
-          sendBack(res,"{'result':'ok'}");
+          Player.testAndAddPlayer(res,req.body.name);
      });
      app.delete('/api/players/:playerId', function(req,res){
           Player.removeById(playerId);
@@ -46,7 +44,6 @@ module.exports = function(app) {
      app.post('/api/games',function(req,res){
           var number,player1,player2,type,sPlayer1,sPlayer2;
           var newGame = new GameModel();
-          console.log(req);
           newGame._id = req.body._id;
           if(req.body._id != null)
                newGame._id = req.body._id;
@@ -55,12 +52,7 @@ module.exports = function(app) {
                     newGame.player1 = req.body.player1.name
                else
                     newGame.player1 = req.body.player1;
-               if(!Player.testPlayer(newGame.player1)){
-                    sendBack(res,"{'result':'Player 1 does not exists'");
-                    return;
-               }else{
-                    console.log("P1 : "+newGame.player1);
-               }
+               //TODO : test player1
 
           }
           if(req.body.player2 != null){
@@ -68,12 +60,7 @@ module.exports = function(app) {
                     newGame.player2 = req.body.player2.name
                else
                     newGame.player2 = req.body.player2;
-               if(!Player.testPlayer(newGame.player2)){
-                    sendBack(res,"{'result':'Player 2 does not exists'");
-                    return;
-               }else{
-                    console.log("P2 : "+newGame.player2);
-               }
+               //TODO : test player 2
           }
           if(req.body.sPlayer2 != null){
                     newGame.sPlayer2 = req.body.sPlayer2;
@@ -114,6 +101,7 @@ module.exports = function(app) {
      });
 
      // GENERAL
+
 function processRanking(res,results){
      var rankingTmp = new Array();
      var player1,player2;
