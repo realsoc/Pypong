@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PiPong</string>
-    <string name="player">Player</string>
+    <string name="player">Players</string>
     <string name="new_game">New Game</string>
     <string name="player_1">Player 1</string>
     <string name="player_2">Player 2</string>

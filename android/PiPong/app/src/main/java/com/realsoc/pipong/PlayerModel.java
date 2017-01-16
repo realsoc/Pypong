@@ -17,11 +17,15 @@ import java.util.Iterator;
 public class PlayerModel implements Parcelable{
     private String name;
     private HashMap<String,Integer> gameCount = new HashMap<>();
+    private boolean initialized = true;
+
     protected PlayerModel(Parcel in) {
         name = in.readString();
         Serializable hashmap = in.readSerializable();
         if(hashmap instanceof HashMap)
             gameCount = (HashMap<String,Integer>)hashmap;
+        else
+            initialized = false;
     }
     public PlayerModel(JSONObject obj){
         try {
@@ -32,6 +36,7 @@ public class PlayerModel implements Parcelable{
     }
     public PlayerModel(String name){
         this.name = name;
+        initialized = false;
     }
     public void setGameCount(JSONObject obj){
         Iterator<String> keys = obj.keys();
@@ -41,6 +46,7 @@ public class PlayerModel implements Parcelable{
             try {
                 gameCount.put(tmp,obj.getInt(tmp));
             } catch (JSONException e) {
+                initialized = false;
                 e.printStackTrace();
             }
         }
@@ -70,5 +76,13 @@ public class PlayerModel implements Parcelable{
 
     public String getName() {
         return name;
+    }
+
+    public String getCountByKey(String s) {
+        return Integer.toString(gameCount.get(s));
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 }

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,10 +27,14 @@ import static com.realsoc.pipong.Constants.REMOTE_SERVER_ADDRESS;
 public class MainActivity extends AppCompatActivity {
 
     public void addPlayer(View v){
+        Button b = (Button) v;
+        b.setEnabled(false);
         new GetPlayersAndGoTask(this,PLAYERS_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/getAll");
     }
 
     public void newGame(View v){
+        Button b = (Button) v;
+        b.setEnabled(false);
         new GetPlayersAndGoTask(this,GAME_ACTIVITY_ID).execute(REMOTE_SERVER_ADDRESS+"/api/getAll");
     }
     @Override
@@ -37,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Button addPlayerButton = (Button) findViewById(R.id.player_activity_button);
+        Button newGameButton = (Button) findViewById(R.id.new_game_button);
+        addPlayerButton.setEnabled(true);
+        newGameButton.setEnabled(true);
+    }
+
     private class GetPlayersAndGoTask extends AsyncTask<String, Integer, String> {
         private Context context;
         private int id;

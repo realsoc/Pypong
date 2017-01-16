@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="defaut"
+        android:id="@+id/player_name"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_gravity="center">
+        <TableRow>
+            <TextView
+                android:text="Label"
+                android:textStyle="bold"
+                android:padding="3dip" />
+            <TextView
+                android:text="6pts"
+                android:gravity="right"
+                android:textStyle="bold"
+                android:padding="3dip" />
+            <TextView
+                android:text="11pts"
+                android:gravity="right"
+                android:textStyle="bold"
+                android:padding="3dip" />
+            <TextView
+                android:text="21pts"
+                android:gravity="right"
+                android:textStyle="bold"
+                android:padding="3dip" />
+            <TextView
+                android:text="Total"
+                android:gravity="right"
+                android:textStyle="bold"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="Games Played"
+                android:padding="3dip" />
+            <TextView
+                android:id="@+id/gp6"
+                android:text="0"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gp11"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gp21"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gp0"
+                android:gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="Games Won"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gw6"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gw11"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gw21"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gw0"
+                android:gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="Games Lost"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gl6"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gl11"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gl21"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/gl0"
+                android:gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="Points Scored"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/ps6"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/ps11"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/ps21"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/ps0"
+                android:gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="Points Lost"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/pl6"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/pl11"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/pl21"
+                android:gravity="right"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:id="@+id/pl0"
+                android:gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

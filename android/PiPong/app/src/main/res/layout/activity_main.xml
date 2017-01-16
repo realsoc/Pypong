@@ -14,7 +14,7 @@
 
     <Button
         android:onClick="addPlayer"
-        android:id="@+id/add_player_button"
+        android:id="@+id/player_activity_button"
         style="@style/Widget.AppCompat.Button"
         android:text="@string/player"
         android:layout_height="wrap_content"
