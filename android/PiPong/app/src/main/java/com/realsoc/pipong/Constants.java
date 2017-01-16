@@ -16,7 +16,7 @@ public final class Constants {
     public static final String GAME_ACTIVITY_NAME = "GameActivity";
     public static final String CONFIGURATION_ACTIVITY_NAME = "ConfigurationActivity";
     public static final String SELECT_DIFFERENT_PLAYER = "Select different players";
-    public static final String REMOTE_SERVER_ADDRESS = "http://212.47.243.250:8080";
+    public static final String REMOTE_SERVER_ADDRESS = "http://*.*.*.*:8080";
 
 
 }
