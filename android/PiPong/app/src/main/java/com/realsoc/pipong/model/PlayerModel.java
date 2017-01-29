@@ -1,4 +1,4 @@
-package com.realsoc.pipong;
+package com.realsoc.pipong.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,27 +6,21 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
-
 /**
  * Created by Hugo on 14/01/2017.
  */
 
 public class PlayerModel implements Parcelable{
+    private long id = -1;
     private String name;
-    private HashMap<String,Integer> gameCount = new HashMap<>();
-    private boolean initialized = true;
+    private boolean isOnline;
 
     protected PlayerModel(Parcel in) {
+        id = in.readLong();
         name = in.readString();
-        Serializable hashmap = in.readSerializable();
-        if(hashmap instanceof HashMap)
-            gameCount = (HashMap<String,Integer>)hashmap;
-        else
-            initialized = false;
+        isOnline = in.readInt() == 1;
     }
+    //TODO
     public PlayerModel(JSONObject obj){
         try {
             name = obj.getString("name");
@@ -36,21 +30,19 @@ public class PlayerModel implements Parcelable{
     }
     public PlayerModel(String name){
         this.name = name;
-        initialized = false;
     }
-    public void setGameCount(JSONObject obj){
-        Iterator<String> keys = obj.keys();
-        String tmp;
-        while(keys.hasNext()){
-            tmp = keys.next();
-            try {
-                gameCount.put(tmp,obj.getInt(tmp));
-            } catch (JSONException e) {
-                initialized = false;
-                e.printStackTrace();
-            }
-        }
+
+    public PlayerModel(String playerName, boolean isOnline) {
+        this.name = playerName;
+        this.isOnline = isOnline;
     }
+
+    public PlayerModel(long id, String name, boolean online) {
+        this.id = id;
+        this.name = name;
+        this.isOnline = online;
+    }
+
     public static final Creator<PlayerModel> CREATOR = new Creator<PlayerModel>() {
         @Override
         public PlayerModel createFromParcel(Parcel in) {
@@ -70,19 +62,29 @@ public class PlayerModel implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
-        dest.writeSerializable(gameCount);
+        dest.writeInt(isOnline ? 1:0);
     }
-
+    public void setName(String nName){
+        this.name = nName;
+    }
     public String getName() {
         return name;
     }
 
-    public String getCountByKey(String s) {
-        return Integer.toString(gameCount.get(s));
+    public void setOnline(boolean online) {
+        this.isOnline = online;
+    }
+    public boolean isOnline(){
+        return isOnline;
     }
 
-    public boolean isInitialized() {
-        return initialized;
+
+    public long getId() {
+        return id;
+    }
+    public void setId(long mId) {
+        this.id = mId;
     }
 }

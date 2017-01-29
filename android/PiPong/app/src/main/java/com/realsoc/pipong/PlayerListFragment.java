@@ -1,6 +1,5 @@
 package com.realsoc.pipong;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +15,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import com.realsoc.pipong.model.CountModel;
+import com.realsoc.pipong.model.PlayerModel;
+import com.realsoc.pipong.utils.DataUtils;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Hugo on 13/01/2017.
@@ -28,68 +28,27 @@ import okhttp3.OkHttpClient;
 
 public class PlayerListFragment extends ListFragment {
 
-    private ArrayList<PlayerModel> players;
+    private static final String LOG_TAG = "PlayerListFragment";
+    private HashMap<String,PlayerModel> players;
+    private HashMap<String,CountModel> counts;
     private ArrayList<String> playersStringList;
-    private ArrayList<GameModel> games;
-    private static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-    private OkHttpClient client;
     private ArrayAdapter<String> aa;
     private Handler mHandler;
-    private Bundle savedState = null;
-    public static PlayerListFragment newInstance(final ArrayList<PlayerModel> players,
-                                                 ArrayList<GameModel> games,
-                                                 OkHttpClient client){
+    private DataUtils dataUtils;
+    public static PlayerListFragment newInstance(){
 
 
             PlayerListFragment eu = new PlayerListFragment();
-            Bundle args = new Bundle();
-            args.putParcelableArrayList("players", players);
-            args.putParcelableArrayList("games", games);
-            eu.setArguments(args);
-            eu.setClient(client);
         return eu;
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d("PLF","OnCreate");
-        if(savedInstanceState == null && savedState == null){
-            if(players != null){
-                if(playersStringList == null){
-                    playersStringList = createStrListFromObjList(players);
-                }
-            }
-        }else{
-            if(savedState == null){
-                if(savedInstanceState.containsKey("SaveBundle"));
-                    savedState = savedInstanceState.getBundle("SaveBundle");
-            }
-            if(savedState == null)
-                throw new AssertionError("savedState can't be null");
-            if(players == null){
-                if(savedState.containsKey("players")){
-                    players = savedState.getParcelableArrayList("players");
-                    if(playersStringList == null){
-                        if(savedState.containsKey("playersStringList")){
-                            playersStringList = savedState.getStringArrayList("playersStringList");
-                        }else{
-                            playersStringList = createStrListFromObjList(players);
-                        }
-                    }
-                }
-            }
-            if(games == null){
-                if(savedState.containsKey("games")){
-                    games = savedState.getParcelableArrayList("games");
-                }
-            }
-        }
-        if(games == null)
-            Log.d("PLF","OC : games null");
-        if(players == null)
-            Log.d("PLF","OC : players null");
-        if(playersStringList == null)
-            Log.d("PLF","OC : playersStringList null");
+        dataUtils = DataUtils.getInstance(getContext());
+        players = dataUtils.getPlayers();
+        counts = dataUtils.getCounts();
+        playersStringList = dataUtils.getPlayerAsStringList();
+
         this.mHandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
@@ -106,34 +65,15 @@ public class PlayerListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
     }
-    public void addPlayerToList(String name){
-        this.playersStringList.add(name);
-        players.add(new PlayerModel(name));
+    public void adviseNewPlayer(String name){
+        if(!playersStringList.contains(name)){
+            Log.d(LOG_TAG,"Error adding player");
+            //playersStringList.add(name);
+            //players.put(name,new PlayerModel(name));
+        }
         Message msg = Message.obtain();
         msg.what = 0;
         mHandler.sendMessage(msg);
-    }
-    public void setArguments(Bundle args){
-        Log.d("PLF","SetArguments");
-        if(args.containsKey("players")) {
-            this.players = args.getParcelableArrayList("players");
-            playersStringList = createStrListFromObjList(players);
-        }else{
-            Log.d("PLF", "BUG does not have players array list");
-        }
-        if(args.containsKey("games")){
-            this.games = args.getParcelableArrayList("games");
-        }else{
-            Log.d("PLF", "BUG does not have games array list");
-        }
-    }
-
-    private ArrayList<String> createStrListFromObjList(ArrayList<PlayerModel> players) {
-        ArrayList<String> ret = new ArrayList<>();
-        for(PlayerModel player : players){
-            ret.add(player.getName());
-        }
-        return ret;
     }
 
     @Nullable
@@ -162,9 +102,14 @@ public class PlayerListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Log.d("PLF","OnListItemClick");
-        PlayerModel currentPlayerModel = this.players.get(position);
-        PlayerDetailFragment newFragment = PlayerDetailFragment.newInstance(currentPlayerModel);
-
+        PlayerDetailFragment newFragment = PlayerDetailFragment.newInstance(playersStringList.get(position));
+       /* Account mAccount = new Account("dummyaccount","realsoc.com");
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(mAccount,"com.realsoc.pipong.provider",settingsBundle);*/
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 // Replace whatever is in the fragment_container view with this fragment,
 // and add the transaction to the back stack so the user can navigate back
@@ -175,31 +120,32 @@ public class PlayerListFragment extends ListFragment {
         transaction.commit();
     }
 
-    @Override
+
+    public void addPlayer(FragmentManager supportFragmentManager){
+        new NewPlayerDialogFragment().show(supportFragmentManager, "NewPlayer");
+    }
+
+
+
+
+        /*
+            @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d("PLF","OnActivityCreated");
     }
-    public void setClient(OkHttpClient client){
-        this.client = client;
-    }
-    public void addPlayer(FragmentManager supportFragmentManager){
-        new NewPlayerDialogFragment().show(supportFragmentManager, "tag"); // or getFragmentManager() in API 11+
-    }
-    @Override
+            @Override
     public void onDestroyView() {
         Log.d("PLF","OnDestroyView");
         super.onDestroyView();
         savedState = saveState();
     }
-
-    private Bundle saveState() { /* called either from onDestroyView() or onSaveInstanceState() */
+            private Bundle saveState() { // called either from onDestroyView() or onSaveInstanceState()
         Bundle state = new Bundle();
-        state.putParcelableArrayList("players", players);
-        state.putParcelableArrayList("games", games);
-        state.putStringArrayList("playersStringList", playersStringList);
-        return state;
-    }
+    state.putSerializable("players", players);
+    state.putStringArrayList("playersStringList", playersStringList);
+    return state;
+}
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -207,8 +153,46 @@ public class PlayerListFragment extends ListFragment {
         Log.d("PLF","OnSaveInstanceState ");
         outState.putBundle("SaveBundle", (savedState != null) ? savedState : saveState());
     }
-
-
+         public void setArguments(Bundle args){
+        Log.d("PLF","SetArguments");
+        if(args.containsKey("players")) {
+            this.players = (HashMap<String,PlayerModel>)args.getSerializable("players");
+            playersStringList =new ArrayList<>(players.keySet());
+        }else{
+            Log.d("PLF", "BUG does not have players array list");
+        }
+    }
+        if(savedInstanceState == null && savedState == null){
+            if(players != null){
+                if(playersStringList == null){
+                    playersStringList = new ArrayList<>(players.keySet());
+                }
+            }
+        }else{
+            if(savedState == null){
+                if(savedInstanceState.containsKey("SaveBundle"));
+                    savedState = savedInstanceState.getBundle("SaveBundle");
+            }
+            if(savedState == null)
+                throw new AssertionError("savedState can't be null");
+            if(players == null){
+                if(savedState.containsKey("players")){
+                    players = (HashMap<String,PlayerModel>)savedState.getSerializable("players");
+                    if(playersStringList == null){
+                        if(savedState.containsKey("playersStringList")){
+                            playersStringList = savedState.getStringArrayList("playersStringList");
+                        }else{
+                            playersStringList = new ArrayList<>(players.keySet());
+                        }
+                    }
+                }
+            }
+        }
+        if(players == null)
+            Log.d("PLF","OC : players null");
+        if(playersStringList == null)
+            Log.d("PLF","OC : playersStringList null");*/
+/*
 
     @Override
     public void onAttach(Context context) {
@@ -268,5 +252,5 @@ public class PlayerListFragment extends ListFragment {
     public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
         super.onInflate(context, attrs, savedInstanceState);
         Log.d("PLF","OnInflate");
-    }
+    }*/
 }

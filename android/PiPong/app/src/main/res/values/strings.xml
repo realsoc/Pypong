@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PiPong</string>
+    <string name="preference_file_key">com.realsoc.pipong.PREFERENCES</string>
     <string name="player">Players</string>
     <string name="new_game">New Game</string>
     <string name="player_1">Player 1</string>
@@ -13,4 +14,5 @@
     <string name="main_activity">PiPong</string>
     <string name="configuration_activity">Configuration</string>
     <string name="GameActivity">Playing</string>
+    <string name="FIRST_LAUNCHED">is_first_launched</string>
 </resources>
