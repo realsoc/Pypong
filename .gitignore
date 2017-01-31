@@ -1,5 +1,6 @@
 *.log
 *.aux
+/pi/PiPongServer/node_modules/*
 !/pi/server/node_modules
 /pi/server/node_modules/*
 !/pi/server/node_modules/config
