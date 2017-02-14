@@ -8,10 +8,6 @@ import com.realsoc.pipong.data.DataContract.GameEntry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-
 /**
  * Created by Hugo on 14/01/2017.
  */
@@ -20,61 +16,115 @@ public class GameModel implements Parcelable {
     private long id = -1;
     private int type;
     private boolean isOnline;
-    private String player1;
-    private String player2;
-    private int sPlayer1;
-    private int sPlayer2;
-    private String date;
-    private final DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+    private long player1_id = -1;
+    private long player2_id = -1;
+    private String player1_name;
+    private String player2_name;
+    private String user = "0";
+    private int player1_score;
+    private int player2_score;
+    private long date;
 
     public GameModel(){
 
     }
-    //{"_id":String,
-    // "player1":String,
-    // "player2":String,
-    // "sPlayer1":Integer,
-    // "sPlayer2":Integer,
-    // "date":String ex :"2016-11-17",
-    // "type":Integer,
-    // "__v":Integer}
 
-    //TODO
-    public GameModel(JSONObject gameObj, HashMap<String,PlayerModel> players){
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public long getPlayer1_id() {
+        return player1_id;
+    }
+
+    public void setPlayer1_id(long player1_id) {
+        this.player1_id = player1_id;
+    }
+
+    public long getPlayer2_id() {
+        return player2_id;
+    }
+
+    public void setPlayer2_id(long player2_id) {
+        this.player2_id = player2_id;
+    }
+
+    public JSONObject toJSON(){
+        JSONObject ret = new JSONObject();
         try {
-            id = gameObj.getLong(GameEntry.COLUMN_ID);
-            type = gameObj.getInt(GameEntry.COLUMN_TYPE);
-            isOnline = gameObj.getInt(GameEntry.COLUMN_IS_ONLINE) == 1;
-            player1 = gameObj.getString(GameEntry.COLUMN_PLAYER1_NAME);
-            player2 = gameObj.getString(GameEntry.COLUMN_PLAYER2_NAME);
-            sPlayer1 = gameObj.getInt(GameEntry.COLUMN_PLAYER1_SCORE);
-            sPlayer2 = gameObj.getInt(GameEntry.COLUMN_PLAYER2_SCORE);
-            date = gameObj.getString(GameEntry.COLUMN_DATE);
-
-        } catch (JSONException e) {
+            if (id != -1)
+                ret.put(GameEntry.COLUMN_ID, id);
+            if (type == 6 || type == 11 || type == 21)
+                ret.put(GameEntry.COLUMN_TYPE, type);
+            ret.put(GameEntry.COLUMN_IS_ONLINE, isOnline);
+            if (!player1_name.equals(""))
+                ret.put(GameEntry.COLUMN_PLAYER1_NAME, player1_name);
+            if (!player2_name.equals(""))
+                ret.put(GameEntry.COLUMN_PLAYER2_NAME, player2_name);
+            ret.put(GameEntry.COLUMN_PLAYER1_SCORE,player1_score);
+            ret.put(GameEntry.COLUMN_PLAYER2_SCORE,player2_score);
+            ret.put(GameEntry.COLUMN_DATE, date);
+            ret.put(GameEntry.COLUMN_USER,user);
+        }catch (JSONException e){
             e.printStackTrace();
         }
+        return ret;
+    }
+    public GameModel(JSONObject gameObj){
+        try {
+            if(gameObj.has(GameEntry.COLUMN_ID))
+                id = gameObj.getLong(GameEntry.COLUMN_ID);
+            if(gameObj.has(GameEntry.COLUMN_TYPE))
+                type = gameObj.getInt(GameEntry.COLUMN_TYPE);
+            if(gameObj.has(GameEntry.COLUMN_IS_ONLINE))
+                isOnline = gameObj.getBoolean(GameEntry.COLUMN_IS_ONLINE);
+            if(gameObj.has(GameEntry.COLUMN_PLAYER1_NAME))
+                player1_name = gameObj.getString(GameEntry.COLUMN_PLAYER1_NAME);
+            if(gameObj.has(GameEntry.COLUMN_PLAYER2_NAME))
+                player2_name = gameObj.getString(GameEntry.COLUMN_PLAYER2_NAME);
+            if(gameObj.has(GameEntry.COLUMN_PLAYER1_SCORE))
+                player1_score = gameObj.getInt(GameEntry.COLUMN_PLAYER1_SCORE);
+            if(gameObj.has(GameEntry.COLUMN_PLAYER2_SCORE))
+                player2_score = gameObj.getInt(GameEntry.COLUMN_PLAYER2_SCORE);
+            if(gameObj.has(GameEntry.COLUMN_USER))
+                user = gameObj.getString(GameEntry.COLUMN_USER);
+            if(gameObj.has(GameEntry.COLUMN_DATE))
+                date = gameObj.getLong(GameEntry.COLUMN_DATE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }finally {
 
+        }
     }
     protected GameModel(Parcel in) {
         id = in.readLong();
         type =  in.readInt();
         isOnline = in.readInt() == 1;
-        player1 = in.readString();
-        player2 = in.readString();
-        sPlayer1 = in.readInt();
-        sPlayer2 = in.readInt();
-        date =  in.readString();
+        player1_id = in.readLong();
+        player2_id = in.readLong();
+        player1_name = in.readString();
+        player2_name = in.readString();
+        user = in.readString();
+        player1_score = in.readInt();
+        player2_score = in.readInt();
+        date =  in.readLong();
     }
 
-    public GameModel(long id, int type, boolean isOnline, String player1, String player2, int sPlayer1, int sPlayer2, String date) {
+    public GameModel(long id, int type, boolean isOnline, long player1_id,long player2_id,String player1, String player2_name,String user, int player1_score, int player2_score, long date) {
         this.id = id;
         this.type = type;
         this.isOnline = isOnline;
-        this.player1 = player1;
-        this.player2 = player2;
-        this.sPlayer1 = sPlayer1;
-        this.sPlayer2 = sPlayer2;
+        this.player1_id = player1_id;
+        this.player2_id = player2_id;
+        this.player1_name = player1;
+        this.player2_name = player2_name;
+        this.user = user;
+        this.player1_score = player1_score;
+        this.player2_score = player2_score;
         this.date = date;
     }
 
@@ -100,27 +150,30 @@ public class GameModel implements Parcelable {
         dest.writeLong(id);
         dest.writeInt(type);
         dest.writeInt(isOnline?1:0);
-        dest.writeString(player1);
-        dest.writeString(player2);
-        dest.writeInt(sPlayer1);
-        dest.writeInt(sPlayer2);
-        dest.writeString(date);
+        dest.writeLong(player1_id);
+        dest.writeLong(player2_id);
+        dest.writeString(player1_name);
+        dest.writeString(player2_name);
+        dest.writeString(user);
+        dest.writeInt(player1_score);
+        dest.writeInt(player2_score);
+        dest.writeLong(date);
     }
 
     public String getPlayer1() {
-        return player1;
+        return player1_name;
     }
     public String getPlayer2() {
-        return player2;
+        return player2_name;
     }
     public int getType() {
         return type;
     }
     public int getScorePlayer1() {
-        return sPlayer1;
+        return player1_score;
     }
     public int getScorePlayer2() {
-        return sPlayer2;
+        return player2_score;
     }
     public long getId() {
         return id;
@@ -128,7 +181,7 @@ public class GameModel implements Parcelable {
     public boolean isOnline(){
         return isOnline;
     }
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
@@ -140,22 +193,22 @@ public class GameModel implements Parcelable {
         this.isOnline = online;
     }
     public void setScorePlayer1(int SPlayer1) {
-        this.sPlayer1 = SPlayer1;
+        this.player1_score = SPlayer1;
     }
     public void setScorePlayer2(int SPlayer2) {
-        this.sPlayer2 = SPlayer2;
+        this.player2_score = SPlayer2;
     }
     public void setType(int type) {
         this.type = type;
     }
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
     public void setPlayer1(String player1) {
-        this.player1 = player1;
+        this.player1_name = player1;
     }
-    public void setPlayer2(String player2) {
-        this.player2 = player2;
+    public void setPlayer2_name(String player2_name) {
+        this.player2_name = player2_name;
     }
 
 }

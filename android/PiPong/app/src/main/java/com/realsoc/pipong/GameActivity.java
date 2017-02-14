@@ -16,7 +16,6 @@ import com.realsoc.pipong.data.DataContract.GameEntry;
 import com.realsoc.pipong.model.GameModel;
 import com.realsoc.pipong.utils.DataUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -66,46 +65,37 @@ public class GameActivity extends AppCompatActivity{
     }
 
     private void updateServeShow() {
-        if(type == 6 || type == 11){
-            if((scoreP1+scoreP2)%4<2){
-                if(firstServe == 0){
-                    serveP1.setVisibility(View.VISIBLE);
-                    serveP2.setVisibility(View.INVISIBLE);
-                }else{
-                    serveP1.setVisibility(View.INVISIBLE);
-                    serveP2.setVisibility(View.VISIBLE);
-                }
+        int step;
+        if(scoreP1>=type && scoreP2>=type){
+            step = 1;
+        }else{
+            if(type == 6 ||type == 11){
+                step = 2;
             }else{
-                if(firstServe == 1){
-                    serveP1.setVisibility(View.VISIBLE);
-                    serveP2.setVisibility(View.INVISIBLE);
-                }else{
-                    serveP1.setVisibility(View.INVISIBLE);
-                    serveP2.setVisibility(View.VISIBLE);
-                }
+                step = 5;
+            }
+        }
+        if((scoreP1+scoreP2)%(2*step)<step){
+            if(firstServe == 0){
+                serveP1.setVisibility(View.VISIBLE);
+                serveP2.setVisibility(View.INVISIBLE);
+            }else{
+                serveP1.setVisibility(View.INVISIBLE);
+                serveP2.setVisibility(View.VISIBLE);
             }
         }else{
-            if((scoreP1+scoreP2)%10<5){
-                if(firstServe == 0){
-                    serveP1.setVisibility(View.VISIBLE);
-                    serveP2.setVisibility(View.INVISIBLE);
-                }else{
-                    serveP1.setVisibility(View.INVISIBLE);
-                    serveP2.setVisibility(View.VISIBLE);
-                }
+            if(firstServe == 1){
+                serveP1.setVisibility(View.VISIBLE);
+                serveP2.setVisibility(View.INVISIBLE);
             }else{
-                if(firstServe == 1){
-                    serveP1.setVisibility(View.VISIBLE);
-                    serveP2.setVisibility(View.INVISIBLE);
-                }else{
-                    serveP1.setVisibility(View.INVISIBLE);
-                    serveP2.setVisibility(View.VISIBLE);
-                }
+                serveP1.setVisibility(View.INVISIBLE);
+                serveP2.setVisibility(View.VISIBLE);
             }
         }
     }
     private void testEndGame() {
         if((scoreP1 >= type && scoreP1>scoreP2+1)||(scoreP2>=type && scoreP2>scoreP1+1)){
+
             showDialog();
         }
     }
@@ -178,12 +168,11 @@ public class GameActivity extends AppCompatActivity{
     private void saveGame(){
         GameModel newGame = new GameModel();
         newGame.setPlayer1(player1);
-        newGame.setPlayer2(player2);
+        newGame.setPlayer2_name(player2);
         newGame.setType(type);
         newGame.setScorePlayer1(scoreP1);
         newGame.setScorePlayer2(scoreP2);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
-        newGame.setDate(dateFormat.format(new Date()));
+        newGame.setDate(new Date().getTime());
         dataUtils.addGame(newGame);
     }
     public void sendData(View v){

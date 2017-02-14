@@ -18,11 +18,7 @@ import android.widget.TextView;
 
 public class NewPlayerDialogFragment extends DialogFragment {
     private TextView input;
-    public interface YesNoListener {
-        void onYes(String name);
 
-        void onNo();
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,7 +53,13 @@ public class NewPlayerDialogFragment extends DialogFragment {
         alertDialog.setPositiveButton("Send",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        ((YesNoListener) getActivity()).onYes(input.getText().toString());
+                        //TODO MAX LENGTH 12
+                        if(!input.getText().toString().equals("")) {
+                            Bundle mBundle = new Bundle();
+                            mBundle.putInt("type",PlayersActivity.NEW_PLAYER_DIALOG_FRAGMENT);
+                            mBundle.putString("name", input.getText().toString());
+                            ((YesNoListener) getActivity()).onYes(mBundle);
+                        }
                     }
 
                 });

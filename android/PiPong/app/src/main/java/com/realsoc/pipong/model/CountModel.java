@@ -12,6 +12,7 @@ public class CountModel implements Parcelable {
     private static final String LOG_TAG = "CountModel";
     private long id = -1;
     private String name;
+    private long player_id = -1;
     private int pointLost6 = 0;
     private int pointLost11 = 0;
     private int pointLost21 = 0;
@@ -31,8 +32,9 @@ public class CountModel implements Parcelable {
     public CountModel(String name){
         this.name = name;
     }
-    public CountModel(long id, String name, int pointLost6, int pointLost11, int pointLost21, int pointScored6, int pointScored11, int pointScored21, int gameWon6, int gameWon11, int gameWon21, int gameLost6, int gameLost11, int gameLost21, int gamePlayed6, int gamePlayed11, int gamePlayed21) {
+    public CountModel(long id,long playerId, String name, int pointLost6, int pointLost11, int pointLost21, int pointScored6, int pointScored11, int pointScored21, int gameWon6, int gameWon11, int gameWon21, int gameLost6, int gameLost11, int gameLost21, int gamePlayed6, int gamePlayed11, int gamePlayed21) {
         this.id = id;
+        this.player_id = playerId;
         this.name = name;
         this.pointLost6 = pointLost6;
         this.pointLost11 = pointLost11;
@@ -51,8 +53,17 @@ public class CountModel implements Parcelable {
         this.gamePlayed21 = gamePlayed21;
     }
 
+    public long getPlayer_id() {
+        return player_id;
+    }
+
+    public void setPlayer_id(long player_id) {
+        this.player_id = player_id;
+    }
+
     protected CountModel(Parcel in) {
         id = in.readLong();
+        player_id = in.readLong();
         name = in.readString();
         pointLost6 = in.readInt();
         pointLost11 = in.readInt();
@@ -289,6 +300,7 @@ public class CountModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
+        dest.writeLong(player_id);
         dest.writeString(name);
         dest.writeInt(pointLost6);
         dest.writeInt(pointLost11);

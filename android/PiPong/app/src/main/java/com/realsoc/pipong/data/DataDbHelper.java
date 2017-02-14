@@ -16,20 +16,28 @@ public class DataDbHelper extends SQLiteOpenHelper {
     public final static String SQL_CREATE_PLAYER_TABLE =  "CREATE TABLE "+PlayerEntry.TABLE_NAME+" ("+
             PlayerEntry.COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "+
             PlayerEntry.COLUMN_IS_ONLINE + " INTEGER, "+
+            PlayerEntry.COLUMN_USER + " STRING NOT NULL, "+
+            PlayerEntry.COLUMN_CONFLICT + " INTEGER, "+
             PlayerEntry.COLUMN_PLAYER_NAME + " TEXT NOT NULL, "+
             " UNIQUE  ("+PlayerEntry.COLUMN_PLAYER_NAME+") ON CONFLICT REPLACE);";
     public final static String SQL_CREATE_GAME_TABLE = "CREATE TABLE "+ GameEntry.TABLE_NAME+" ("+
             GameEntry.COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "+
-            GameEntry.COLUMN_DATE +" TEXT, "+
+            GameEntry.COLUMN_DATE +" INTEGER NOT NULL, "+
             GameEntry.COLUMN_IS_ONLINE +" INTEGER, " +
-            GameEntry.COLUMN_PLAYER1_NAME + " TEXT NOT NULL, "+
-            GameEntry.COLUMN_PLAYER2_NAME + " TEXT NOT NULL, "+
+            GameEntry.COLUMN_PLAYER1_ID + " INTEGER NOT NULL, "+
+            GameEntry.COLUMN_USER + " STRING NOT NULL, "+
+            GameEntry.COLUMN_PLAYER2_ID + " INTEGER NOT NULL, "+
             GameEntry.COLUMN_PLAYER1_SCORE + " INTEGER NOT NULL, "+
             GameEntry.COLUMN_PLAYER2_SCORE + " INTEGER NOT NULL, "+
-            GameEntry.COLUMN_TYPE+ " INTEGER NOT NULL);";
+            GameEntry.COLUMN_TYPE+ " INTEGER NOT NULL, "+
+            " UNIQUE ("+GameEntry.COLUMN_DATE+") ON CONFLICT IGNORE, "+
+            " FOREIGN KEY ("+GameEntry.COLUMN_PLAYER1_ID+") REFERENCES "+
+            PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"),"+
+            " FOREIGN KEY ("+GameEntry.COLUMN_PLAYER2_ID+") REFERENCES "+
+            PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"));";
     public final static String SQL_CREATE_COUNT_TABLE = "CREATE TABLE "+ CountEntry.TABLE_NAME+" ("+
             CountEntry.COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "+
-            CountEntry.COLUMN_PLAYER_NAME +" TEXT NOT NULL, "+
+            CountEntry.COLUMN_PLAYER_ID +" INTEGER NOT NULL, "+
             CountEntry.COLUMN_6GL +" INTEGER NOT NULL, " +
             CountEntry.COLUMN_6GP +" INTEGER NOT NULL, " +
             CountEntry.COLUMN_6GW +" INTEGER NOT NULL, " +
@@ -45,14 +53,16 @@ public class DataDbHelper extends SQLiteOpenHelper {
             CountEntry.COLUMN_21GW +" INTEGER NOT NULL, " +
             CountEntry.COLUMN_21PS +" INTEGER NOT NULL, " +
             CountEntry.COLUMN_21PL +" INTEGER NOT NULL," +
-            " UNIQUE  ("+CountEntry.COLUMN_PLAYER_NAME+") ON CONFLICT REPLACE);";
+            " UNIQUE  ("+CountEntry.COLUMN_PLAYER_ID+") ON CONFLICT REPLACE"+
+            " FOREIGN KEY ("+CountEntry.COLUMN_PLAYER_ID+") REFERENCES "+
+            PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"));";;
             /*
             //");";
             +", FOREIGN KEY ("+GameEntry.COLUMN_PLAYER1_KEY+") REFERENCES "+
             PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"),"+
             " FOREIGN KEY ("+GameEntry.COLUMN_PLAYER2_KEY+") REFERENCES "+
             PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"));";*/
-    public static final int DATABASE_VERSION = 15;
+    public static final int DATABASE_VERSION = 24;
     public static final String DATABASE_NAME = "pipong.db";
 
     public DataDbHelper(Context context) {

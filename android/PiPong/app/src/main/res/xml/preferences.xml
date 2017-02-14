@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="@string/IS_ONLINE"
+        android:title="@string/is_online"
+        android:summary="@string/is_online_summ"
+        android:defaultValue="false" />
+    <EditTextPreference
+        android:key="@string/SERVER_IP"
+        android:title="@string/ip_server"
+        android:summary="@string/ip_server_summ"
+        android:defaultValue="0.0.0.0"
+        />
+    <!--
+    <Preference android:title="Reset"
+        android:key="@string/reset"
+        android:summary="Reset all states"/>-->
+</PreferenceScreen>

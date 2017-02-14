@@ -23,6 +23,20 @@ app.get('/games/:id', Controller.getSingleGame.bind(Controller));
 app.get('/games/:bInf/:bSup', Controller.getGamesInInterval.bind(Controller));
 app.post('/games', Controller.postGames.bind(Controller));
 
+app.get('/drop/users',Controller.dropUsers.bind(Controller));
+app.get('/subscribe',Controller.getId.bind(Controller));
+app.post('/subscribe',Controller.confirmSubscribe.bind(Controller));
+app.post('/unsubscribe',Controller.unsubscribe.bind(Controller));
+app.get('/users',Controller.getUsers.bind(Controller));
+app.post('/users',Controller.exists.bind(Controller));
+
+app.post('/getAll',Controller.getAll.bind(Controller));
+app.post('/getAllFrom',Controller.getAllFrom.bind(Controller));
+app.post('/getAllBetween',Controller.getAllBetween.bind(Controller));
+app.get('/test',Controller.test.bind(Controller));
+
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log('Express listens on port ' + app.get('port'));

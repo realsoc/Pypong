@@ -15,4 +15,22 @@
     <string name="configuration_activity">Configuration</string>
     <string name="GameActivity">Playing</string>
     <string name="FIRST_LAUNCHED">is_first_launched</string>
+    <string name="is_online">is_online</string>
+    <string name="is_online_summ">Specify the needs to the app synchronize</string>
+    <string name="ip_server">Server IP</string>
+    <string name="ip_server_summ">The IP Address for the remote server</string>
+    <string name="HAS_SUBSCRIBED">has_suscribed</string>
+    <string name="IS_ONLINE" >is_online</string>
+    <string name="SERVER_IP" >server_ip</string>
+    <string name="HASH">hash</string>
+    <string name="TIME_START">timeStart</string>
+    <string name="LAST_UPDATE">last_update</string>
+    <string name="HAS_CONFLICT">has_conflict</string>
+    <string name="reset">reset</string>
+    <string name="IP_SET">ip_set</string>
+    <string name="UNSUBSCRIBE">unsubscribe</string>
+    <string name="OLD_SERVER_IP">old_server_ip</string>
+    <string name="conflict_string">Conflict with server, please click to resolve</string>
+    <string name="other_player">That\'s a new player</string>
+    <string name="same_player">There is so one</string>
 </resources>

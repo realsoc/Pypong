@@ -10,7 +10,7 @@
         android:layout_height="wrap_content" />
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:stretchColumns="1"
         android:layout_marginTop="15dp"
         android:layout_marginRight="15dp"
@@ -169,5 +169,24 @@
                 android:padding="3dip" />
         </TableRow>
     </TableLayout>
-
+    <Button
+        android:layout_marginTop="20dp"
+        style="@style/Widget.AppCompat.Button"
+        android:id="@+id/same_player"
+        android:onClick="samePlayer"
+        android:visibility="invisible"
+        android:text="@string/same_player"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:layout_marginTop="20dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:id="@+id/other_player"
+        android:onClick="otherPlayer"
+        android:visibility="invisible"
+        android:text="@string/other_player"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

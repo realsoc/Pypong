@@ -7,9 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.realsoc.pipong.model.CountModel;
+import com.realsoc.pipong.model.PlayerModel;
 import com.realsoc.pipong.utils.DataUtils;
 
 /**
@@ -20,13 +22,18 @@ public class PlayerDetailFragment extends Fragment {
     private static final String LOG_TAG = "PlayerDetailFragment";
     //private PlayerModel mPlayer;
     private String name;
+    private PlayerModel player;
     private CountModel mCount;
     private Bundle savedState;
     private DataUtils dataUtils;
+    private Button samePlayer;
+    private Button otherPlayer;
     public PlayerDetailFragment(){
 
     }
-
+    public String getName(){
+        return name;
+    }
     public static PlayerDetailFragment newInstance(String nName) {
         Log.d(LOG_TAG, "NewInstance");
         PlayerDetailFragment eu = new PlayerDetailFragment();
@@ -46,12 +53,13 @@ public class PlayerDetailFragment extends Fragment {
             name = savedState.getString("name");
         }
         Log.d(LOG_TAG,name);
-
-
         dataUtils = DataUtils.getInstance(getContext());
+        player = dataUtils.getPlayers().get(name);
         mCount = dataUtils.getCounts().get(name);
         if(mCount == null)
             Log.d(LOG_TAG,"OC : count null");
+        if(player == null)
+            Log.d(LOG_TAG,"OC : player null");
         super.onCreate(savedInstanceState);
     }
 
@@ -65,8 +73,21 @@ public class PlayerDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG,"OnCreateView");
         View ret = inflater.inflate(R.layout.fragment_player_details,container,false);
+        if(player != null){
+            samePlayer = (Button) ret.findViewById(R.id.same_player);
+            otherPlayer = (Button) ret.findViewById(R.id.other_player);
+            if(player.isConflict()){
+                samePlayer.setVisibility(Button.VISIBLE);
+                otherPlayer.setVisibility(Button.VISIBLE);
+            }
+            else{
+                samePlayer.setVisibility(Button.INVISIBLE);
+                otherPlayer.setVisibility(Button.INVISIBLE);
+            }
+        }
         if(mCount != null){
-            ((TextView) ret.findViewById(R.id.player_name)).setText(mCount.getName());
+            String toto = mCount.getName();
+            ((TextView) ret.findViewById(R.id.player_name)).setText(toto);
             ((TextView) ret.findViewById(R.id.pl6)).setText(String.valueOf(mCount.getPointLost6()));
             ((TextView) ret.findViewById(R.id.pl11)).setText(String.valueOf(mCount.getPointLost11()));
             ((TextView) ret.findViewById(R.id.pl21)).setText(String.valueOf(mCount.getPointLost21()));
@@ -102,6 +123,10 @@ public class PlayerDetailFragment extends Fragment {
         Bundle state = new Bundle();
         state.putString("name", name);
         return state;
+    }
+
+    public void killYaSelf() {
+        getFragmentManager().popBackStack();
     }
 /*
 

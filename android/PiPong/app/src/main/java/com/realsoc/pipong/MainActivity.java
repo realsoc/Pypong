@@ -9,17 +9,26 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.realsoc.pipong.model.PlayerModel;
 import com.realsoc.pipong.utils.DataUtils;
+import com.realsoc.pipong.utils.NetworkUtils;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MainActivity";
     private boolean isFirstLaunched;
+    private boolean hasSuscribed;
     private boolean activityCreated = false;
     public static final String AUTHORITY = "com.realsoc.pipong.data.provider";
     public static final String ACCOUNT_TYPE = "pipong.com";
@@ -32,10 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     Account mAccount;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +54,20 @@ public class MainActivity extends AppCompatActivity {
                 dataHolderInit = savedInstanceState.getBoolean("dataHolderInit");
             }
         }
-        SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         isFirstLaunched = sharedPreferences.getBoolean(getString(R.string.FIRST_LAUNCHED), true);
+        //TODO STRING INTERNATIONALISATION
+        hasSuscribed = sharedPreferences.getBoolean("has_subscribed",false);
         if (isFirstLaunched) {
             // TODO : Tuto or Dialog with choice online or offline
+            sharedPreferences.edit().putBoolean(getString(R.string.FIRST_LAUNCHED),false)
+                    .putString(getString(R.string.SERVER_IP),"").apply();
+            defaultSharedPreferences.edit().putBoolean(getString(R.string.IS_ONLINE),false)
+                    .putString(getString(R.string.SERVER_IP),"0.0.0.0").apply();
+            //backgroundThreadShortToast(this,"FIRST LAUNCHED");
         }
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(getString(R.string.FIRST_LAUNCHED), false);
-
         if(!activityCreated){
             createDataHolder = new CreateDataHolder(this);
             createDataHolder.execute();
@@ -66,18 +78,38 @@ public class MainActivity extends AppCompatActivity {
         newGameButton = (Button) findViewById(R.id.new_game_button);
         /*
         mAccount = CreateSyncAccount(this);
-        ContentResolver.setIsSyncable(mAccount, "com.realsoc.pipong.provider", 1);
+        ContentResolver.setIsSyncable(mAccount, "com.realsoc.pipong.data.provider", 1);
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(
                 ContentResolver.SYNC_EXTRAS_MANUAL, true);
         settingsBundle.putBoolean(
                 ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(mAccount, "com.realsoc.pipong.provider", settingsBundle);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();*/
-    }
+        ContentResolver.requestSync(mAccount, "com.realsoc.pipong.data.provider", settingsBundle);*/
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.preferences:
+            {
+                Intent intent = new Intent();
+                intent.setClassName(this, "com.realsoc.pipong.SettingsActivity");
+                startActivity(intent);
+                return true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     public void addPlayer(View v) {
         Button b = (Button) v;
         b.setEnabled(false);
@@ -105,7 +137,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    public void test(View v){
+        DataUtils dataUtils = DataUtils.getInstance(this);
 
+        NetworkUtils networkUtils = NetworkUtils.getInstance(this);
+        HashMap<String,PlayerModel> players = dataUtils.getOfflinePlayersFromDB();
+        Log.d(LOG_TAG,players.toString());
+        networkUtils.postOfflinePlayers();
+        players = dataUtils.getOfflinePlayersFromDB();
+        Log.d(LOG_TAG,players.toString());
+    }
 
     public static Account CreateSyncAccount(Context context) {
         Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
@@ -147,42 +188,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */ /*
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Main Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        /*
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        /*
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    }*/
 
     private class CreateDataHolder extends AsyncTask<Void, Integer, Boolean> {
         private Context context;

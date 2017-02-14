@@ -229,14 +229,14 @@ public class TestProvider extends AndroidTestCase {
         );
         String[] proj = new String[]{
                 DataContract.GameEntry.COLUMN_ID,
-                DataContract.GameEntry.COLUMN_PLAYER1_KEY,
-                DataContract.GameEntry.COLUMN_PLAYER2_KEY,
-                DataContract.GameEntry.COLUMN_SCORE_PLAYER1,
-                DataContract.GameEntry.COLUMN_SCORE_PLAYER2,
+                DataContract.GameEntry.COLUMN_PLAYER1_ID,
+                DataContract.GameEntry.COLUMN_PLAYER2_ID,
+                DataContract.GameEntry.COLUMN_PLAYER1_SCORE,
+                DataContract.GameEntry.COLUMN_PLAYER2_SCORE,
                 DataContract.GameEntry.PLAYER1_ALIAS+"."+ DataContract.PlayerEntry.COLUMN_PLAYER_NAME + " as " + DataContract.GameEntry.PLAYER1_ALIAS,
                 DataContract.GameEntry.PLAYER2_ALIAS+"."+ DataContract.PlayerEntry.COLUMN_PLAYER_NAME + " as " + DataContract.GameEntry.PLAYER2_ALIAS,
         };
-        SQLiteQueryBuilder toto = DataProvider.testByPlayerName();
+        SQLiteQueryBuilder toto = DataProvider.();
         DataDbHelper dbHelper = new DataDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cur = toto.query(db,

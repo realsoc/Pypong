@@ -5,9 +5,14 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.CancellationSignal;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.realsoc.pipong.data.DataContract.GameEntry;
+import com.realsoc.pipong.data.DataContract.PlayerEntry;
 
 /**
  * Created by Hugo on 16/01/2017.
@@ -15,38 +20,53 @@ import android.support.annotation.Nullable;
 
 public class DataProvider extends ContentProvider {
     private static final UriMatcher mUriMatcher = buildUriMatcher();
+    private static final String LOG_TAG = "DataProvider";
     private DataDbHelper mDataDbHelper;
 
     public static final int PLAYER = 100;
     public static final int PLAYER_WITH_NAME = 101;
+    public static final int PLAYER_OFFLINE = 102;
     public static final int GAME = 200;
     public static final int GAME_WITH_PLAYER = 201;
     public static final int GAME_WITH_DUEL = 202;
     public static final int GAME_WITH_TYPE = 203;
     public static final int GAME_WITH_DATE = 204;
+    public static final int GAME_OFFLINE = 205;
     public static final int COUNT = 300;
     public static final int COUNT_WITH_NAME = 301;
 
 
-    //private static final SQLiteQueryBuilder sGameWithNameQueryBuilder;
-/*
+    private static final SQLiteQueryBuilder sGameWithNameQueryBuilder;
+
     static{
-        sGameByPlayerQueryBuilder = new SQLiteQueryBuilder();
-        sGameByPlayerQueryBuilder.setTables(
-                DataContract.GameEntry.TABLE_NAME +
-                        " JOIN " + DataContract.PlayerEntry.TABLE_NAME +
-                        " ON " + DataContract.GameEntry.TABLE_NAME +
-                        "." + DataContract.GameEntry.COLUMN_PLAYER1_KEY +
-                        " = " + DataContract.PlayerEntry.TABLE_NAME +
-                        "." + DataContract.PlayerEntry._ID +
-                        " UNION " + DataContract.GameEntry.TABLE_NAME +
-                        " JOIN " + DataContract.PlayerEntry.TABLE_NAME +
-                        " ON " + DataContract.GameEntry.TABLE_NAME +
-                        "." + DataContract.GameEntry.COLUMN_PLAYER2_KEY +
-                        " = " + DataContract.PlayerEntry.TABLE_NAME +
-                        "." + DataContract.PlayerEntry._ID + ";"
+        sGameWithNameQueryBuilder = new SQLiteQueryBuilder();
+        sGameWithNameQueryBuilder.setTables(
+                GameEntry.TABLE_NAME +" AS "+GameEntry.ALIAS+
+                        " INNER JOIN " + PlayerEntry.TABLE_NAME + " AS " + PlayerEntry.TABLE_NAME_ALIAS_1+
+                        " ON " + GameEntry.ALIAS +
+                        "." + GameEntry.COLUMN_PLAYER1_ID +
+                        " = " + PlayerEntry.TABLE_NAME_ALIAS_1 +
+                        "." + PlayerEntry.COLUMN_ID +
+                        " INNER JOIN " + PlayerEntry.TABLE_NAME + " AS " + PlayerEntry.TABLE_NAME_ALIAS_2+
+                        " ON " + GameEntry.ALIAS +
+                        "." + GameEntry.COLUMN_PLAYER2_ID +
+                        " = " + PlayerEntry.TABLE_NAME_ALIAS_2 +
+                        "." + PlayerEntry.COLUMN_ID
         );
-    }*/
+    }
+    private static final SQLiteQueryBuilder sCountWithNameQueryBuilder;
+
+    static{
+        sCountWithNameQueryBuilder = new SQLiteQueryBuilder();
+        sCountWithNameQueryBuilder.setTables(
+                DataContract.CountEntry.TABLE_NAME +" AS "+ DataContract.CountEntry.ALIAS+
+                        " INNER JOIN " + PlayerEntry.TABLE_NAME +
+                        " ON " + DataContract.CountEntry.ALIAS +
+                        "." + DataContract.CountEntry.COLUMN_PLAYER_ID +
+                        " = " + PlayerEntry.TABLE_NAME +
+                        "." + PlayerEntry.COLUMN_ID
+        );
+    }
     public static final String sGameWithPlayer =
             DataContract.GameEntry.COLUMN_PLAYER1_NAME + " = ? OR " +
                     DataContract.GameEntry.COLUMN_PLAYER2_NAME + " = ?";
@@ -62,15 +82,21 @@ public class DataProvider extends ContentProvider {
     private static final String sGameWithType =
             DataContract.GameEntry.TABLE_NAME +
                     "." + DataContract.GameEntry.COLUMN_TYPE + " = ?";
+    private static final String sGameOffline =
+            DataContract.GameEntry.TABLE_NAME +
+                    "." + DataContract.GameEntry.COLUMN_IS_ONLINE + " = 0";
     private static final String sCountWithPlayer =
             DataContract.CountEntry.COLUMN_PLAYER_NAME + " = ?";
+
+    private static final String sPlayerOffline =
+            DataContract.PlayerEntry.TABLE_NAME +
+                    "." + DataContract.PlayerEntry.COLUMN_IS_ONLINE + " = 0";
     /*public static SQLiteQueryBuilder testByPlayerName(){
         return sGameWithNameQueryBuilder;
     }*/
     private Cursor getGameByPlayerName(Uri uri, String[] projection,String sortOrder){
         String playerName = DataContract.GameEntry.getFirstPlayerNameFromUri(uri);
-        return mDataDbHelper.getReadableDatabase().query(
-                DataContract.GameEntry.TABLE_NAME,
+        return sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                 projection,
                 sGameWithPlayer,
                 new String[]{playerName,playerName},
@@ -82,8 +108,7 @@ public class DataProvider extends ContentProvider {
     private Cursor getGameByDuel(Uri uri, String[] projection, String sortOrder){
         String player1Name = DataContract.GameEntry.getFirstPlayerNameFromUri(uri);
         String player2Name = DataContract.GameEntry.getSecondPlayerNameFromUri(uri);
-        return  mDataDbHelper.getReadableDatabase().query(
-                DataContract.GameEntry.TABLE_NAME,
+        return  sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                 projection,
                 sGameWithDuel,
                 new String[]{player1Name,player2Name,player2Name,player1Name},
@@ -95,8 +120,7 @@ public class DataProvider extends ContentProvider {
     }
     private Cursor getGameByType(Uri uri,String[] projection, String sortOrder){
         String type = DataContract.GameEntry.getGameTypeFromUri(uri);
-        return mDataDbHelper.getReadableDatabase().query(
-                DataContract.GameEntry.TABLE_NAME,
+        return sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                 projection,
                 sGameWithType,
                 new String[]{type},
@@ -107,8 +131,7 @@ public class DataProvider extends ContentProvider {
 
     private Cursor getGameByDate(Uri uri, String[] projection, String sortOrder) {
         String date = DataContract.GameEntry.getGameDateFromUri(uri);
-        return mDataDbHelper.getReadableDatabase().query(
-                DataContract.GameEntry.TABLE_NAME,
+        return sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                 projection,
                 sGameWithDate,
                 new String[]{date},
@@ -119,8 +142,7 @@ public class DataProvider extends ContentProvider {
     }
     private Cursor getCountByPlayerName(Uri uri, String[] projection, String sortOrder) {
         String playerName = DataContract.CountEntry.getPlayerNameFromUri(uri);
-        return mDataDbHelper.getReadableDatabase().query(
-                DataContract.CountEntry.TABLE_NAME,
+        return sCountWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                 projection,
                 sCountWithPlayer,
                 new String[]{playerName},
@@ -129,12 +151,36 @@ public class DataProvider extends ContentProvider {
                 sortOrder
         );
     }
+    private Cursor getGameOffline(Uri uri,String[] projection,String sortOrder){
+        return sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
+                projection,
+                sGameOffline,
+                null,
+                null,
+                null,
+                sortOrder
+        );
+    }
+    private Cursor getPlayerOffline(Uri uri,String[] projection,String sortOrder){
+        return mDataDbHelper.getReadableDatabase().query(
+                DataContract.PlayerEntry.TABLE_NAME,
+                projection,
+                sPlayerOffline,
+                null,null,null,sortOrder
+        );
+    }
 
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CancellationSignal cancellationSignal) {
         Cursor retCursor;
         switch (mUriMatcher.match(uri)){
+            case GAME_OFFLINE:
+                retCursor = getGameOffline(uri,projection,sortOrder);
+                break;
+            case PLAYER_OFFLINE:
+                retCursor = getPlayerOffline(uri,projection,sortOrder);
+                break;
             case GAME_WITH_PLAYER:
                 retCursor = getGameByPlayerName(uri,projection,sortOrder);
                 break;
@@ -148,8 +194,8 @@ public class DataProvider extends ContentProvider {
                 retCursor = getGameByType(uri,projection,sortOrder);
                 break;
             case GAME:
-                retCursor = mDataDbHelper.getReadableDatabase().query(
-                        DataContract.GameEntry.TABLE_NAME,
+                Log.d(LOG_TAG,sGameWithNameQueryBuilder.buildQuery(projection,selection,selectionArgs,null,null,sortOrder,null));
+                retCursor = sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                         projection,
                         selection,
                         selectionArgs,
@@ -170,8 +216,7 @@ public class DataProvider extends ContentProvider {
                 );
                 break;
             case COUNT:
-                retCursor = mDataDbHelper.getReadableDatabase().query(
-                        DataContract.CountEntry.TABLE_NAME,
+                retCursor = sCountWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                         projection,
                         selection,
                         selectionArgs,
@@ -198,9 +243,11 @@ public class DataProvider extends ContentProvider {
         nUriMatcher.addURI(authority, DataContract.PATH_GAME + "/type/#", GAME_WITH_TYPE);
         nUriMatcher.addURI(authority, DataContract.PATH_GAME + "/name/*", GAME_WITH_PLAYER);
         nUriMatcher.addURI(authority, DataContract.PATH_GAME + "/duel/*/*", GAME_WITH_DUEL);
+        nUriMatcher.addURI(authority, DataContract.PATH_GAME + "/offline", GAME_OFFLINE);
 
         nUriMatcher.addURI(authority, DataContract.PATH_PLAYER,PLAYER);
         nUriMatcher.addURI(authority, DataContract.PATH_PLAYER + "/name/*",PLAYER_WITH_NAME);
+        nUriMatcher.addURI(authority, DataContract.PATH_PLAYER + "/offline",PLAYER_OFFLINE);
 
         nUriMatcher.addURI(authority, DataContract.PATH_COUNT,COUNT);
         nUriMatcher.addURI(authority, DataContract.PATH_COUNT +"/name/*",COUNT_WITH_NAME);
@@ -228,6 +275,8 @@ public class DataProvider extends ContentProvider {
                 return DataContract.PlayerEntry.CONTENT_TYPE;
             case PLAYER_WITH_NAME:
                 return DataContract.PlayerEntry.CONTENT_ITEM_TYPE;
+            case PLAYER_OFFLINE:
+                return DataContract.PlayerEntry.CONTENT_TYPE;
             case GAME:
                 return DataContract.GameEntry.CONTENT_TYPE;
             case GAME_WITH_DUEL:
@@ -235,6 +284,8 @@ public class DataProvider extends ContentProvider {
             case GAME_WITH_TYPE:
                 return DataContract.GameEntry.CONTENT_TYPE;
             case GAME_WITH_PLAYER:
+                return DataContract.GameEntry.CONTENT_TYPE;
+            case GAME_OFFLINE:
                 return DataContract.GameEntry.CONTENT_TYPE;
             case COUNT:
                 return DataContract.CountEntry.CONTENT_TYPE;
@@ -262,7 +313,7 @@ public class DataProvider extends ContentProvider {
                 break;
             }
             case GAME: {
-                long _id = db.insert(DataContract.GameEntry.TABLE_NAME, null, values);
+                long _id = db.insertOrThrow(DataContract.GameEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = DataContract.GameEntry.buildGameUri(_id);
                 else
@@ -270,7 +321,7 @@ public class DataProvider extends ContentProvider {
                 break;
             }
             case COUNT: {
-                long _id = db.insert(DataContract.CountEntry.TABLE_NAME,null,values);
+                long _id = db.insertOrThrow(DataContract.CountEntry.TABLE_NAME,null,values);
                 if(_id > 0)
                     returnUri = DataContract.CountEntry.buildCountUri(_id);
                 else
@@ -330,7 +381,6 @@ public class DataProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(uri,null);
         return rowsUpdated;
     }
-
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mDataDbHelper.getWritableDatabase();

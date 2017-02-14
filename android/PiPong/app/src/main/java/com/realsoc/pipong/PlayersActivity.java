@@ -1,9 +1,13 @@
 package com.realsoc.pipong;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,11 +21,31 @@ import com.realsoc.pipong.utils.DataUtils;
  * Created by Hugo on 03/01/2017.
  */
 
-public class PlayersActivity extends AppCompatActivity implements NewPlayerDialogFragment.YesNoListener{
+public class PlayersActivity extends AppCompatActivity implements YesNoListener{
+    public static final int NEW_PLAYER_DIALOG_FRAGMENT = 0;
+    public static final int CONFLICT_SOLVER_FRAGMENT = 1;
     private static final String LOG_TAG = "PLAYERS_ACTIVITY";
+    public static final String UPDATE_VIEW = "UPDATE_VIEW";
     private DataUtils dataUtils;
     private PlayerListFragment playerListFragment;
+    private PlayerDetailFragment playerDetailFragment;
 
+    private BroadcastReceiver activityReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(LOG_TAG,"ON RECEIVE");
+            if(intent.getAction().equals(UPDATE_VIEW)){
+                Log.d(LOG_TAG,"ON UPDATE VIEW");
+
+                if(playerListFragment != null){
+                    Log.d(LOG_TAG,"ADVISE DATA CHANGED");
+
+                    playerListFragment.adviseDataChanged();
+                }
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("PA","OnCreate");
@@ -37,6 +61,10 @@ public class PlayersActivity extends AppCompatActivity implements NewPlayerDialo
             transaction.replace(R.id.players_frame_container, playerListFragment,"PlayerList");
             transaction.commit();
         }
+        if (activityReceiver != null) {
+            IntentFilter intentFilter = new IntentFilter(UPDATE_VIEW);
+            registerReceiver(activityReceiver, intentFilter);
+        }
 
     }
 
@@ -46,6 +74,8 @@ public class PlayersActivity extends AppCompatActivity implements NewPlayerDialo
         super.onAttachFragment(fragment);
         if(fragment instanceof PlayerListFragment)
             playerListFragment = (PlayerListFragment) fragment;
+        else if(fragment instanceof PlayerDetailFragment)
+            playerDetailFragment = (PlayerDetailFragment)fragment;
         Log.d("PA","OnAttachFragmentTwo");
     }
 
@@ -53,18 +83,67 @@ public class PlayersActivity extends AppCompatActivity implements NewPlayerDialo
 
     public void addPlayer(View v){
         if(playerListFragment != null)
-            playerListFragment.addPlayer(getSupportFragmentManager());
+            //playerListFragment.addPlayer(getSupportFragmentManager());
+            new NewPlayerDialogFragment().show(getSupportFragmentManager(), "NewPlayer");
         else
             Log.d("PA","AddPlayer playerListFragment null");
+    }
+    public void otherPlayer(View v){
+        Log.d(LOG_TAG,"HEY");
+        if(playerDetailFragment!=null){
+            Log.d(LOG_TAG,"HO");
+            ConflictSolverFragment conflictSolverFragment = ConflictSolverFragment.getInstance(playerDetailFragment.getName());
+            conflictSolverFragment.show(getSupportFragmentManager(), "ConflictSolver");
+        }
+    }
+    public void samePlayer(View v){
+        if(playerDetailFragment != null){
+            String name = playerDetailFragment.getName();
+            playerDetailFragment.killYaSelf();
+            dataUtils.removePlayer(name);
+            dataUtils.notInConflict(name);
+            if(playerListFragment!=null){
+                playerListFragment.adviseDataChanged();
+            }
+        }
     }
 
 
     @Override
-    public void onYes(final String name) {
-        PlayerModel nPlayer = new PlayerModel(name);
-        dataUtils.addPlayer(nPlayer);
-        playerListFragment.adviseNewPlayer(name);
-        dataUtils.addPlayer(nPlayer);
+    public void onYes(Bundle mBundle) {
+        int type = -1;
+        if(mBundle.containsKey("type")){
+            type = mBundle.getInt("type");
+            switch(type){
+                case CONFLICT_SOLVER_FRAGMENT:
+                    if(mBundle.containsKey("newName") && mBundle.containsKey("oldName")){
+                        if(dataUtils.containsPlayer(mBundle.getString("newName"))){
+                            Toast.makeText(this,"This player already exists",Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            String oldName = mBundle.getString("oldName");
+                            String newName = mBundle.getString("newName");
+                            dataUtils.modifyPlayer(oldName,newName);
+                            playerListFragment.adviseDataChanged();
+                        }
+                    }
+                    break;
+                case NEW_PLAYER_DIALOG_FRAGMENT:
+                    if(mBundle.containsKey("name")){
+                        String name = mBundle.getString("name");
+                        PlayerModel nPlayer = new PlayerModel(name);
+                        dataUtils.addPlayer(nPlayer);
+                        playerListFragment.adviseDataChanged();
+                        getFragmentManager().popBackStack();
+                    }
+                    else
+                        Log.d(LOG_TAG,"onYes new player name does not exist");
+                    break;
+            }
+        }
+        else{
+            Log.d(LOG_TAG,"onYes type does not exist");
+        }
     }
 
     @Override
@@ -86,7 +165,38 @@ public class PlayersActivity extends AppCompatActivity implements NewPlayerDialo
     protected void onDestroy() {
         super.onDestroy();
         Log.d("PA","OnDestroy");
+        unregisterReceiver(activityReceiver);
         getSupportFragmentManager().beginTransaction().remove(playerListFragment);
+    }
+
+    public void launchDetailFragment(String s) {
+
+        //ContentResolver.setIsSyncable(mAccount, "com.realsoc.pipong.data.provider", 1);
+/*
+        Account newAccount = new Account(ACCOUNT, MainActivity.ACCOUNT_TYPE);
+        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
+
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            Log.d(LOG_TAG, "Account created");
+        } else {
+            Log.d(LOG_TAG, "Account already exists");
+        }
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(newAccount,"com.realsoc.pipong.data.provider",settingsBundle);*/
+        Fragment frag = PlayerDetailFragment.newInstance(s);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack so the user can navigate back*/
+        transaction.replace(R.id.players_frame_container, frag);
+        transaction.addToBackStack(null);
+
+// Commit the transaction
+        transaction.commit();
     }
 
 /*

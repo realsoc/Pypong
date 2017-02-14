@@ -51,6 +51,8 @@ public class DataContract {
         public static final String COLUMN_6GP = "game_played_6";
         public static final String COLUMN_11GP = "game_played_11";
         public static final String COLUMN_21GP = "game_played_21";
+        public static final String COLUMN_PLAYER_ID = "player_id";
+        public static final String ALIAS = "c";
         //public static final String COLUMN_0GP = "game_played_0";
 
 
@@ -74,10 +76,14 @@ public class DataContract {
 
         public static final String COLUMN_ID = "game_id";
         public static final String COLUMN_PLAYER1_NAME = "player1_name";
+        public static final String COLUMN_PLAYER1_ID = "player1_id";
         public static final String COLUMN_PLAYER2_NAME = "player2_name";
+        public static final String COLUMN_PLAYER2_ID = "player2_id";
         public static final String COLUMN_PLAYER1_SCORE = "player1_score";
         public static final String COLUMN_PLAYER2_SCORE = "player2_score";
         public static final String COLUMN_IS_ONLINE = "is_online";
+        public static final String COLUMN_USER = "user";
+
         public static final String COLUMN_DATE ="date";
         public static final String COLUMN_TYPE = "type";
 
@@ -85,6 +91,7 @@ public class DataContract {
         public static final String ALIAS_DUEL = "duel";
         public static final String ALIAS_TYPE = "type";
         public static final String ALIAS_DATE = "date";
+        public static final String ALIAS = "g" ;
 
 
         public static Uri buildGameWithPlayerName(String name){
@@ -124,17 +131,27 @@ public class DataContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PLAYER;
         public static final String TABLE_NAME = "player";
+        public static final String TABLE_NAME_ALIAS_1 = "player1" ;
+        public static final String TABLE_NAME_ALIAS_2 = "player2" ;
 
         public static final String COLUMN_PLAYER_NAME = "name";
         public static final String COLUMN_IS_ONLINE = "is_online";
         public static final String COLUMN_ID = "player_id";
+        public static final String COLUMN_CONFLICT = "conflict";
+        public static final String COLUMN_USER = "user";
+
         public static Uri buildPlayerUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
         }
         public static Uri buildPlayerWithName(String name){
             return CONTENT_URI.buildUpon().appendPath(COLUMN_PLAYER_NAME).appendPath(name).build();
         }
-        
-        
+
+
+        public static Uri buildPlayerOffline() {
+            return CONTENT_URI.buildUpon().appendPath("offline").build();
+        }
+
+
     }
 }
