@@ -9,7 +9,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Patterns;
-import android.widget.Toast;
 
 import com.realsoc.pipong.utils.DataUtils;
 import com.realsoc.pipong.utils.NetworkUtils;
@@ -42,18 +41,14 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                 //IP PREFERENCE CHANGED
                 if(getActivity()!=null) {
-                    if (key == getActivity().getString(R.string.SERVER_IP)) {
+                    if (key.equals(getActivity().getString(R.string.SERVER_IP))) {
                         String newIp = prefs.getString(key, "0.0.0.0");
-                        //IP DOES NOT MATCH IP OR WEB ADDRESS
                         if (!Patterns.IP_ADDRESS.matcher(newIp).matches() && !newIp.matches(NetworkUtils.ADDRESS_REGEX)) {
-                            Toast.makeText(getActivity(), "IP not valid", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getActivity(), getString(R.string.ip_not_valid), Toast.LENGTH_SHORT).show();
                             SharedPreferences.Editor edit = prefs.edit();
                             edit.putString(key, appSharedPref.getString(key, "0.0.0.0")).apply();
-                            //IP DOES MATCH IP OR WEB ADDRESS
                         } else {
-                            //OLD IP CONTAINS THE OLD VALUE FOR SERVER IP
                             String oldIP = appSharedPref.getString(getActivity().getString(R.string.SERVER_IP), "");
-                            //SERVER IP CHANGED, UNSUBSCRIBE
                             if (!oldIP.equals(newIp) && !oldIP.equals("")) {
                                 unSubscribe(appSharedPref);
                                 appSharedPref.edit().putBoolean(getActivity().getString(R.string.UNSUBSCRIBE), true)
@@ -62,23 +57,19 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                                         .putLong(getActivity().getString(R.string.TIME_START), 0)
                                         .apply();
                             }
-                            Toast.makeText(getActivity(), "IP valid", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getActivity(), getString(R.string.ip_valid), Toast.LENGTH_SHORT).show();
                             SharedPreferences.Editor edit = appSharedPref.edit();
                             edit.putString(key, newIp).
                                     putBoolean(getActivity().getString(R.string.IP_SET), true).apply();
                         }
-                        // IS_ONLINE CHANGED
-                    } else if (key == getActivity().getString(R.string.IS_ONLINE)) {
-                        //Toast.makeText(getActivity(), "is online " + String.valueOf(prefs.getBoolean(key, false)), Toast.LENGTH_SHORT).show();
+                    } else if (key.equals(getActivity().getString(R.string.IS_ONLINE))) {
                         appSharedPref.edit().putBoolean(key, prefs.getBoolean(key, false)).apply();
-                        //Toast.makeText(getActivity(), "IS_ONLINE CHANGED works:" + String.valueOf(appSharedPref.getBoolean(key, false) == prefs.getBoolean(key, true)), Toast.LENGTH_SHORT).show();
                     }
                 }else{
                     Log.d(LOG_TAG," ACTIVITY DOES NOT EXIST IN SETTINGS FRAG");
                 }
             }
         };
-        //Preference button = findPreference(getActivity().getString(R.string.reset));
         Preference ip = findPreference(getActivity().getString(R.string.SERVER_IP));
         ip.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -88,22 +79,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 return true;
             }
         });
-        /*button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Log.d(LOG_TAG,"reset clicked");
-                reset();
-                return true;
-            }
-
-        });*/
         defaultSharedPref.registerOnSharedPreferenceChangeListener(listener);
     }
 
     //RESET ALL STATE
     //TODO : DEBUG ONLY,
     private void reset() {
-        Log.d(LOG_TAG,"reset");
         if(getActivity()!=null){
             defaultSharedPref.edit().putString(getString(R.string.SERVER_IP),"0.0.0.0")
                     .putBoolean(getString(R.string.IS_ONLINE),false).apply();
@@ -138,7 +119,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference exercisesPref = findPreference(key);
-        if(key == getString(R.string.SERVER_IP))
+        if(key.equals(getString(R.string.SERVER_IP)))
             exercisesPref.setSummary(sharedPreferences.getString(key, ""));
     }
     @Override

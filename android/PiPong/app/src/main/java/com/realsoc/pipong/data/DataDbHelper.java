@@ -4,9 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.realsoc.pipong.data.DataContract.CountEntry;
 import com.realsoc.pipong.data.DataContract.GameEntry;
 import com.realsoc.pipong.data.DataContract.PlayerEntry;
-import com.realsoc.pipong.data.DataContract.CountEntry;
 
 /**
  * Created by Hugo on 16/01/2017.
@@ -30,7 +30,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
             GameEntry.COLUMN_PLAYER1_SCORE + " INTEGER NOT NULL, "+
             GameEntry.COLUMN_PLAYER2_SCORE + " INTEGER NOT NULL, "+
             GameEntry.COLUMN_TYPE+ " INTEGER NOT NULL, "+
-            " UNIQUE ("+GameEntry.COLUMN_DATE+") ON CONFLICT IGNORE, "+
+            " UNIQUE ("+GameEntry.COLUMN_DATE+","+GameEntry.COLUMN_USER+") ON CONFLICT REPLACE, "+
             " FOREIGN KEY ("+GameEntry.COLUMN_PLAYER1_ID+") REFERENCES "+
             PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"),"+
             " FOREIGN KEY ("+GameEntry.COLUMN_PLAYER2_ID+") REFERENCES "+
@@ -53,7 +53,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
             CountEntry.COLUMN_21GW +" INTEGER NOT NULL, " +
             CountEntry.COLUMN_21PS +" INTEGER NOT NULL, " +
             CountEntry.COLUMN_21PL +" INTEGER NOT NULL," +
-            " UNIQUE  ("+CountEntry.COLUMN_PLAYER_ID+") ON CONFLICT REPLACE"+
+            " UNIQUE  ("+CountEntry.COLUMN_PLAYER_ID+") ON CONFLICT IGNORE"+
             " FOREIGN KEY ("+CountEntry.COLUMN_PLAYER_ID+") REFERENCES "+
             PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"));";;
             /*
@@ -62,7 +62,7 @@ public class DataDbHelper extends SQLiteOpenHelper {
             PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"),"+
             " FOREIGN KEY ("+GameEntry.COLUMN_PLAYER2_KEY+") REFERENCES "+
             PlayerEntry.TABLE_NAME+" ("+PlayerEntry.COLUMN_ID+"));";*/
-    public static final int DATABASE_VERSION = 24;
+    public static final int DATABASE_VERSION = 25;
     public static final String DATABASE_NAME = "pipong.db";
 
     public DataDbHelper(Context context) {

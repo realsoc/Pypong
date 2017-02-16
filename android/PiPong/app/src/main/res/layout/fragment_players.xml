@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout android:layout_width="match_parent"
+<LinearLayout
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/conflictAdviser"
+        android:gravity="center"
+        android:textColor="@color/red"
+        android:text="@string/unresolved_conflicts_not_synchronized"
+        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+
+    <android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeContainer"
@@ -14,6 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 </android.support.v4.widget.SwipeRefreshLayout>
     <TextView
@@ -22,12 +43,13 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="NO PLAYERS OR NO INTERNET" />
+        android:text="@string/no_players_or_no_internet" />
     <android.support.design.widget.FloatingActionButton
         app:backgroundTint="#8BC34A"
         app:srcCompat="@drawable/ic_plus_1"
         app:fabSize="normal"
         android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,3 +59,4 @@
         />
 
 </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

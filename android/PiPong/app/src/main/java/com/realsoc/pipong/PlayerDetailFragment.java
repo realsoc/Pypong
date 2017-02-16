@@ -20,7 +20,8 @@ import com.realsoc.pipong.utils.DataUtils;
 
 public class PlayerDetailFragment extends Fragment {
     private static final String LOG_TAG = "PlayerDetailFragment";
-    //private PlayerModel mPlayer;
+    private static final String SAVE_BUNDLE = "SaveBundle";
+    private static final String NAME = "name";
     private String name;
     private PlayerModel player;
     private CountModel mCount;
@@ -35,7 +36,6 @@ public class PlayerDetailFragment extends Fragment {
         return name;
     }
     public static PlayerDetailFragment newInstance(String nName) {
-        Log.d(LOG_TAG, "NewInstance");
         PlayerDetailFragment eu = new PlayerDetailFragment();
         eu.setName(nName);
         return eu;
@@ -43,23 +43,18 @@ public class PlayerDetailFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(LOG_TAG,"OnCreate");
         if(savedInstanceState != null){
-            if(savedState == null && savedInstanceState.containsKey("SaveBundle")){
-                savedState = savedInstanceState.getBundle("SaveBundle");
+            if(savedState == null && savedInstanceState.containsKey(SAVE_BUNDLE)){
+                savedState = savedInstanceState.getBundle(SAVE_BUNDLE);
             }
         }
         if(savedState != null){
-            name = savedState.getString("name");
+            name = savedState.getString(NAME);
         }
         Log.d(LOG_TAG,name);
         dataUtils = DataUtils.getInstance(getContext());
         player = dataUtils.getPlayers().get(name);
         mCount = dataUtils.getCounts().get(name);
-        if(mCount == null)
-            Log.d(LOG_TAG,"OC : count null");
-        if(player == null)
-            Log.d(LOG_TAG,"OC : player null");
         super.onCreate(savedInstanceState);
     }
 
@@ -71,7 +66,6 @@ public class PlayerDetailFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(LOG_TAG,"OnCreateView");
         View ret = inflater.inflate(R.layout.fragment_player_details,container,false);
         if(player != null){
             samePlayer = (Button) ret.findViewById(R.id.same_player);
@@ -108,100 +102,21 @@ public class PlayerDetailFragment extends Fragment {
             ((TextView) ret.findViewById(R.id.gp11)).setText(String.valueOf(mCount.getGamePlayed11()));
             ((TextView) ret.findViewById(R.id.gp21)).setText(String.valueOf(mCount.getGamePlayed21()));
             ((TextView) ret.findViewById(R.id.gp0)).setText(String.valueOf(mCount.getGamePlayed6()+mCount.getGamePlayed21()+mCount.getGamePlayed11()));
-        }else{
-            Log.d(LOG_TAG,"count null how is it possible");
         }
         return ret;
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d(LOG_TAG,"OnStateInstanceState");
         super.onSaveInstanceState(outState);
-        outState.putBundle("SaveBundle", (savedState != null) ? savedState : saveState());
+        outState.putBundle(SAVE_BUNDLE, (savedState != null) ? savedState : saveState());
     }
     private Bundle saveState() {
         Bundle state = new Bundle();
-        state.putString("name", name);
+        state.putString(NAME, name);
         return state;
     }
 
     public void killYaSelf() {
         getFragmentManager().popBackStack();
     }
-/*
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(LOG_TAG,"OnActivityCreated");
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.d(LOG_TAG,"OnAttach");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(LOG_TAG,"OnDestroyView");
-        savedState = saveState();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d(LOG_TAG,"OnDetach");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(LOG_TAG,"OnDestroy");
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.d(LOG_TAG,"OnViewCreated");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(LOG_TAG,"OnPause");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(LOG_TAG,"OnResume");
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.d(LOG_TAG,"OnViewStateRestored");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(LOG_TAG,"OnStop");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(LOG_TAG,"OnStart");
-    }
-
-    @Override
-    public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
-        super.onInflate(context, attrs, savedInstanceState);
-        Log.d(LOG_TAG,"OnInflate");
-    }
-*/
-
 }

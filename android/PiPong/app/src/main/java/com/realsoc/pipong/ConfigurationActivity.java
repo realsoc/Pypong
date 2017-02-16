@@ -79,8 +79,12 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
         });
         Spinner type = (Spinner) findViewById(R.id.type_spinner);
+
         player1.setAdapter(adapter);
         player2.setAdapter(adapter);
+        if(playersStrArrayList.size()>1){
+            player2.setSelection(1);
+        }
         type.setAdapter(adapterType);
     }
     public int getServe() {
@@ -106,7 +110,7 @@ public class ConfigurationActivity extends AppCompatActivity {
             mBundle.putString(GameEntry.COLUMN_PLAYER1_NAME,player1);
             mBundle.putString(GameEntry.COLUMN_PLAYER2_NAME,player2);
             mBundle.putInt(GameEntry.COLUMN_TYPE,type);
-            mBundle.putInt("serve",serve);
+            mBundle.putInt(GameActivity.SERVE,serve);
             gameIntent.putExtras(mBundle);
             startActivity(gameIntent);
         }else{

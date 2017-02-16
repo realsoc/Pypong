@@ -1,36 +1,61 @@
 <resources>
     <string name="app_name">PiPong</string>
-    <string name="preference_file_key">com.realsoc.pipong.PREFERENCES</string>
-    <string name="player">Players</string>
+    <string name="preference_file_key" translatable="false">com.realsoc.pipong.PREFERENCES</string>
+    <string name="player">Player</string>
     <string name="new_game">New Game</string>
     <string name="player_1">Player 1</string>
     <string name="player_2">Player 2</string>
     <string name="cancel">Cancel</string>
-    <string name="Ok">Ok</string>
+    <string name="Ok" translatable="false">Ok</string>
     <string name="configuration_title">Game Configuration</string>
-    <string name="separator_score">-</string>
+    <string name="separator_score" translatable="false">-</string>
     <string name="game_type">Game Type</string>
     <string name="players_activity">Players</string>
-    <string name="main_activity">PiPong</string>
+    <string name="main_activity" translatable="false">PiPong</string>
     <string name="configuration_activity">Configuration</string>
     <string name="GameActivity">Playing</string>
-    <string name="FIRST_LAUNCHED">is_first_launched</string>
-    <string name="is_online">is_online</string>
-    <string name="is_online_summ">Specify the needs to the app synchronize</string>
+    <string name="FIRST_LAUNCHED" translatable="false">is_first_launched</string>
+    <string name="is_online">Synchronize</string>
+    <string name="is_online_summ">Sync local datas with a server</string>
     <string name="ip_server">Server IP</string>
     <string name="ip_server_summ">The IP Address for the remote server</string>
-    <string name="HAS_SUBSCRIBED">has_suscribed</string>
-    <string name="IS_ONLINE" >is_online</string>
-    <string name="SERVER_IP" >server_ip</string>
-    <string name="HASH">hash</string>
-    <string name="TIME_START">timeStart</string>
-    <string name="LAST_UPDATE">last_update</string>
-    <string name="HAS_CONFLICT">has_conflict</string>
-    <string name="reset">reset</string>
-    <string name="IP_SET">ip_set</string>
-    <string name="UNSUBSCRIBE">unsubscribe</string>
-    <string name="OLD_SERVER_IP">old_server_ip</string>
+    <string name="HAS_SUBSCRIBED" translatable="false">has_suscribed</string>
+    <string name="IS_ONLINE" translatable="false">is_online</string>
+    <string name="SERVER_IP" translatable="false">server_ip</string>
+    <string name="HASH" translatable="false">hash</string>
+    <string name="TIME_START" translatable="false">timeStart</string>
+    <string name="LAST_UPDATE" translatable="false">last_update</string>
+    <string name="HAS_CONFLICT" translatable="false">has_conflict</string>
+    <string name="reset" translatable="false">reset</string>
+    <string name="IP_SET" translatable="false">ip_set</string>
+    <string name="UNSUBSCRIBE" translatable="false">unsubscribe</string>
+    <string name="OLD_SERVER_IP" translatable="false">old_server_ip</string>
     <string name="conflict_string">Conflict with server, please click to resolve</string>
-    <string name="other_player">That\'s a new player</string>
-    <string name="same_player">There is so one</string>
+    <string name="other_player">New player</string>
+    <string name="same_player">Same player</string>
+    <string name="PLAYER_ALREADY_EXISTS">This player already exists</string>
+    <string name="add_player">New Players\' Name</string>
+    <string name="send">Send</string>
+    <string name="game_finished">Game finished</string>
+    <string name="continue_to">Continue to</string>
+    <string name="swtch">Switch</string>
+    <string name="to">to ?</string>
+    <string name="ip_valid">IP valid</string>
+    <string name="ip_not_valid">IP not valid</string>
+    <string name="serve">Serve</string>
+    <string name="random">Random</string>
+    <string name="label">Label</string>
+    <string name="_6pts" translatable="false">6pts</string>
+    <string name="_11pts" translatable="false">11pts</string>
+    <string name="_21pts" translatable="false">21pts</string>
+    <string name="total" translatable="false">Total</string>
+    <string name="games_played">Games Played</string>
+    <string name="games_won">Games Won</string>
+    <string name="games_lost">Games Lost</string>
+    <string name="points_scored">Points Scored</string>
+    <string name="points_lost">Points Lost</string>
+    <string name="unresolved_conflicts_not_synchronized">Unresolved conflicts, not synchronized...</string>
+    <string name="no_players_or_no_internet">NO PLAYERS OR NO INTERNET</string>
+    <string name="send_datas">Send datas</string>
+    <string name="players">Players</string>
 </resources>

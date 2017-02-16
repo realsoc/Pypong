@@ -17,6 +17,7 @@ import android.widget.TextView;
  */
 
 public class NewPlayerDialogFragment extends DialogFragment {
+    private static final java.lang.String NAME = "name";
     private TextView input;
 
 
@@ -37,34 +38,34 @@ public class NewPlayerDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        alertDialog.setTitle("Player");
-        alertDialog.setMessage("New Players' Name");
+        alertDialog.setTitle(getString(R.string.player));
+        alertDialog.setMessage(getString(R.string.add_player));
 
         input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         if(savedInstanceState != null){
-            input.append(savedInstanceState.getString("name"));
+            input.append(savedInstanceState.getString(NAME));
         }
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         input.setLayoutParams(lp);
         alertDialog.setView(input);
-        alertDialog.setPositiveButton("Send",
+        alertDialog.setPositiveButton(getString(R.string.send),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //TODO MAX LENGTH 12
                         if(!input.getText().toString().equals("")) {
                             Bundle mBundle = new Bundle();
-                            mBundle.putInt("type",PlayersActivity.NEW_PLAYER_DIALOG_FRAGMENT);
-                            mBundle.putString("name", input.getText().toString());
+                            mBundle.putInt(PlayersActivity.TYPE,PlayersActivity.NEW_PLAYER_DIALOG_FRAGMENT);
+                            mBundle.putString(PlayersActivity.NAME, input.getText().toString());
                             ((YesNoListener) getActivity()).onYes(mBundle);
                         }
                     }
 
                 });
 
-        alertDialog.setNegativeButton("Cancel",
+        alertDialog.setNegativeButton(getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         ((YesNoListener) getActivity()).onNo();
@@ -76,7 +77,7 @@ public class NewPlayerDialogFragment extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString("name",input.getText().toString());
+        outState.putString(NAME,input.getText().toString());
         super.onSaveInstanceState(outState);
     }
 }

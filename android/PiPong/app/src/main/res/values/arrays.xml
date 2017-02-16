@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="action_titles">
+        <item>@string/ranking</item>
+        <item>@string/players</item>
+        <item>@string/new_game</item>
+        <item></item>
+    </string-array>
+    <string name="ranking">Ranking</string>
+</resources>

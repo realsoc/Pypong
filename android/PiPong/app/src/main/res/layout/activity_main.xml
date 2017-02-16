@@ -11,12 +11,23 @@
     tools:context="com.realsoc.pipong.MainActivity"
     android:orientation="vertical"
     android:gravity="center">
-
+    <Button
+        android:onClick="ranking"
+        android:id="@+id/ranking"
+        style="@style/Widget.AppCompat.Button"
+        android:text="@string/ranking"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="15dp"
+        />
     <Button
         android:onClick="addPlayer"
         android:id="@+id/player_activity_button"
         style="@style/Widget.AppCompat.Button"
-        android:text="@string/player"
+        android:text="@string/players"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         />
@@ -36,14 +47,6 @@
         android:layout_width="0dp"
         android:layout_height="15dp"
         />
-    <!--
-    <Button
-        android:onClick="test"
-        android:id="@+id/test"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:text="TEST"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        />-->
+
 
 </LinearLayout>

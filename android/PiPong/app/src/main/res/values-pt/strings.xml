@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PiPong</string>
+    <string name="cancel">Cancelar</string>
+    <string name="add_player">Nome do novo jogador</string>
+    <string name="PLAYER_ALREADY_EXISTS">Esse jogador jà existe</string>
+    <string name="configuration_activity">"Configuração "</string>
+    <string name="configuration_title">Configuraçao do jogo</string>
+    <string name="conflict_string">"Conflitos a resolver para syncronizar "</string>
+    <string name="game_finished">Encerrar o jogo</string>
+    <string name="game_type">Tipo de jogo</string>
+    <string name="ip_not_valid">IP inválida</string>
+    <string name="ip_server_summ">Endereço IP do servidor</string>
+    <string name="ip_server">Servidor IP</string>
+    <string name="ip_valid">IP válida</string>
+    <string name="is_online">Sincronizar</string>
+    <string name="is_online_summ">Sync local dados com um servidor</string>
+    <string name="new_game">Novo jogo</string>
+    <string name="other_player">Novo jogador</string>
+    <string name="player">Jogador</string>
+    <string name="player_1">1° Jogador</string>
+    <string name="player_2">2° Jogador</string>
+    <string name="players_activity">Jogadores</string>
+    <string name="swtch">Mudar</string>
+    <string name="to">para ?</string>
+    <string name="send">Mandar</string>
+    <string name="same_player">Mesmo jogador</string>
+    <string name="GameActivity">No jogo</string>
+    <string name="serve">Saque</string>
+    <string name="random">Aleatório</string>
+    <string name="label">Label</string>
+    <string name="games_played">Jogos jogados</string>
+    <string name="games_lost">Jogos perdidos</string>
+    <string name="points_scored">Pontos jogados</string>
+    <string name="points_lost">Pontos perdidos</string>
+    <string name="continue_to">"Aumentar para "</string>
+    <string name="games_won">Jogos vencidos</string>
+    <string name="no_players_or_no_internet">NAO EXISTE JOGADORES OU INTERNET NAO FUNCIONA</string>
+    <string name="unresolved_conflicts_not_synchronized">Existe conflitos, impossible de sincronizar.</string>
+    <string name="players">Jogadores</string>
+    <string name="send_datas">Mandar as informaçoes</string>
+    <string name="ranking">Ranking</string>
+</resources>

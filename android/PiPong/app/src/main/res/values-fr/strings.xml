@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PiPong</string>
+    <string name="GameActivity">En cours de jeu</string>
+    <string name="PLAYER_ALREADY_EXISTS">Ce joueur existe déjà</string>
+    <string name="cancel">Annuler</string>
+    <string name="add_player">Nom du nouveau joueur</string>
+    <string name="configuration_activity">Configuration</string>
+    <string name="configuration_title">Configuration du jeu</string>
+    <string name="conflict_string">Conflits à résoudre avant synchro</string>
+    <string name="continue_to">"Passer en "</string>
+    <string name="game_finished">Partie terminée</string>
+    <string name="game_type">Type de partie</string>
+    <string name="ip_not_valid">IP invalide</string>
+    <string name="ip_server_summ">Adresse IP du serveur</string>
+    <string name="ip_server">Serveur IP</string>
+    <string name="ip_valid">IP valide</string>
+    <string name="is_online">Synchroniser</string>
+    <string name="is_online_summ">Sync les données locales avec un serveur</string>
+    <string name="new_game">Nouvelle partie</string>
+    <string name="other_player">Nouveau joueur</string>
+    <string name="player">Joueur</string>
+    <string name="player_1">Joueur 1</string>
+    <string name="player_2">Joueur 2</string>
+    <string name="players_activity">Joueurs</string>
+    <string name="same_player">Même joueur</string>
+    <string name="swtch">Changer</string>
+    <string name="to">pour ?</string>
+    <string name="send">Envoyer</string>
+    <string name="serve">Service</string>
+    <string name="label">Label</string>
+    <string name="games_played">Parties jouées</string>
+    <string name="games_lost">Parties perdues</string>
+    <string name="points_scored">Points marqués</string>
+    <string name="points_lost">Points perdus</string>
+    <string name="games_won">Parties gagnées</string>
+    <string name="no_players_or_no_internet">PAS DE JOUEURS OU PAS D\'INTERNET</string>
+    <string name="unresolved_conflicts_not_synchronized">Conflits existants, sync impossible…</string>
+    <string name="random">Aléatoire</string>
+    <string name="players">Joueurs</string>
+    <string name="send_datas">Envoyer les données</string>
+    <string name="ranking">Classement</string>
+</resources>

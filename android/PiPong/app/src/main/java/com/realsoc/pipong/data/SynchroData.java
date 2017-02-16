@@ -45,7 +45,7 @@ public class SynchroData extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        Log.d(LOG_TAG,"PERFORM SYNC");
+        //Log.d(LOG_TAG,"PERFORM SYNC");
         isOnline = sharedPreferences.getBoolean(getContext().getString(R.string.IS_ONLINE), false);
         initialized = sharedPreferences.getBoolean(getContext().getString(R.string.HAS_SUBSCRIBED), false);
         hash = sharedPreferences.getString(getContext().getString(R.string.HASH),"");
@@ -53,20 +53,20 @@ public class SynchroData extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG,"ip "+ip);
         if(isOnline){
             if(hash.equals("")){
-                Log.d(LOG_TAG,"hash does not exist");
+                //Log.d(LOG_TAG,"hash does not exist");
 
                 networkUtils.getHash();
                 initialized = false;
             }else{
-                Log.d(LOG_TAG,"hash exist");
+                //Log.d(LOG_TAG,"hash exist");
             }
             if(!initialized){
-                Log.d(LOG_TAG,"Not initialized");
+                //Log.d(LOG_TAG,"Not initialized");
                 networkUtils.subscribe();
             }
             initialized = sharedPreferences.getBoolean(getContext().getString(R.string.HAS_SUBSCRIBED), false);
             if(initialized){
-                Log.d(LOG_TAG,"initialized");
+                ///Log.d(LOG_TAG,"initialized");
                 networkUtils.test();
                 networkUtils.postOfflinePlayers();
             }

@@ -2,7 +2,6 @@ package com.realsoc.pipong.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 /**
  * Created by Hugo on 26/01/2017.
@@ -61,7 +60,7 @@ public class CountModel implements Parcelable {
         this.player_id = player_id;
     }
 
-    protected CountModel(Parcel in) {
+    private CountModel(Parcel in) {
         id = in.readLong();
         player_id = in.readLong();
         name = in.readString();
@@ -97,7 +96,7 @@ public class CountModel implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
-    }
+    }/*
     public void addGame(GameModel gameModel){
         int type = gameModel.getType();
         if(gameModel.getPlayer1().equals(name)){
@@ -107,7 +106,7 @@ public class CountModel implements Parcelable {
         }else{
             Log.d(LOG_TAG,"Error add game, player not in game");
         }
-    }
+    }*/
     public void addGame(int type, int scoreFor, int scoreAgainst){
         int result = scoreFor > scoreAgainst ? 1 : -1;
         if (scoreFor == scoreAgainst){

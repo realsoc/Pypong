@@ -35,6 +35,9 @@
             android:label="@string/configuration_activity"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name="com.realsoc.pipong.RankingActivity"
+            android:label="@string/ranking">
+        </activity>
         <activity android:name="com.realsoc.pipong.GameActivity"
             android:label="@string/GameActivity">
         </activity>

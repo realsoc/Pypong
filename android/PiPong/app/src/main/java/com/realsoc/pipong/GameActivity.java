@@ -25,6 +25,7 @@ import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity{
     private static final String LOG_TAG = "GAME_ACTIVITY";
+    public static final String SERVE = "serve";
     private String player1;
     private String player2;
     private int type;
@@ -52,7 +53,7 @@ public class GameActivity extends AppCompatActivity{
         setContentView(R.layout.activity_game);
         player1 = extras.getString(GameEntry.COLUMN_PLAYER1_NAME);
         player2 = extras.getString(GameEntry.COLUMN_PLAYER2_NAME);
-        firstServe = extras.getInt("serve");
+        firstServe = extras.getInt(SERVE);
         serveP1 = (ImageView) findViewById(R.id.serveP1);
         serveP2 = (ImageView) findViewById(R.id.serveP2);
         updateServeShow();
@@ -95,14 +96,13 @@ public class GameActivity extends AppCompatActivity{
     }
     private void testEndGame() {
         if((scoreP1 >= type && scoreP1>scoreP2+1)||(scoreP2>=type && scoreP2>scoreP1+1)){
-
             showDialog();
         }
     }
 
     private void showDialog() {
         final int nextType = (type == 6) ? 11: 21;
-        String passToNext = "Continue to "+Integer.toString(nextType);
+        String passToNext = getString(R.string.continue_to)+Integer.toString(nextType);
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         LayoutInflater factory = LayoutInflater.from(this);
         final View dialogView = factory.inflate(R.layout.autosend_dialog, null);
@@ -124,7 +124,7 @@ public class GameActivity extends AppCompatActivity{
                     });
         }
 
-        alert.setPositiveButton("Game finished",
+        alert.setPositiveButton(getString(R.string.game_finished),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         saveGameAndQuit();

@@ -75,7 +75,7 @@ function DAO(){
 			if(!err && exists){
 				async.parallel({
 					games : function(callback){
-						var query = "SELECT * FROM games WHERE user != '"+hash+"' AND timestamp >= "+timeStart+" AND timestamp <= "+timeEnd;		
+						var query = "SELECT * FROM games WHERE  timestamp >= "+timeStart+" AND timestamp <= "+timeEnd;		
 						db.all(query,function(error,rows){
 							if(error){
 								callback(null);
@@ -85,7 +85,7 @@ function DAO(){
 						});
 					},
 					players : function(callback){
-						var query = "SELECT * FROM players WHERE user != '"+hash+"' AND timestamp >= "+timeStart+" AND timestamp <= "+timeEnd;
+						var query = "SELECT * FROM players WHERE  timestamp >= "+timeStart+" AND timestamp <= "+timeEnd;
 						db.all(query,function(error,rows){
 							if(error){
 								callback(null);
@@ -153,6 +153,9 @@ function DAO(){
 			callback(err);
 		})
 	}
+	function dropGeral(callback){
+		var query1 = ""
+	}
 	return {
 		getInterval:getInterval,
 		findById: findById,
@@ -161,7 +164,8 @@ function DAO(){
 		dropId:dropId,
 		dropFromDB: dropFromDB,
 		getAllForUser: getAllForUser,
-		getAllForUserBetween: getAllForUserBetween
+		getAllForUserBetween: getAllForUserBetween,
+		dropGeral : dropGeral
 	}
 }
 

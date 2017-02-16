@@ -4,12 +4,12 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.CancellationSignal;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.realsoc.pipong.data.DataContract.GameEntry;
 import com.realsoc.pipong.data.DataContract.PlayerEntry;
@@ -75,7 +75,6 @@ public class DataProvider extends ContentProvider {
                     DataContract.GameEntry.COLUMN_PLAYER2_NAME + " = ? ) OR ( " +
                     DataContract.GameEntry.COLUMN_PLAYER1_NAME +" = ? AND " +
                     DataContract.GameEntry.COLUMN_PLAYER2_NAME + " = ? )";
-    ;
     private static final String sGameWithDate =
             DataContract.GameEntry.TABLE_NAME +
                     "." + DataContract.GameEntry.COLUMN_DATE + " = ?";
@@ -151,7 +150,7 @@ public class DataProvider extends ContentProvider {
                 sortOrder
         );
     }
-    private Cursor getGameOffline(Uri uri,String[] projection,String sortOrder){
+    private Cursor getGameOffline(String[] projection,String sortOrder){
         return sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                 projection,
                 sGameOffline,
@@ -161,7 +160,7 @@ public class DataProvider extends ContentProvider {
                 sortOrder
         );
     }
-    private Cursor getPlayerOffline(Uri uri,String[] projection,String sortOrder){
+    private Cursor getPlayerOffline(String[] projection,String sortOrder){
         return mDataDbHelper.getReadableDatabase().query(
                 DataContract.PlayerEntry.TABLE_NAME,
                 projection,
@@ -176,10 +175,10 @@ public class DataProvider extends ContentProvider {
         Cursor retCursor;
         switch (mUriMatcher.match(uri)){
             case GAME_OFFLINE:
-                retCursor = getGameOffline(uri,projection,sortOrder);
+                retCursor = getGameOffline(projection,sortOrder);
                 break;
             case PLAYER_OFFLINE:
-                retCursor = getPlayerOffline(uri,projection,sortOrder);
+                retCursor = getPlayerOffline(projection,sortOrder);
                 break;
             case GAME_WITH_PLAYER:
                 retCursor = getGameByPlayerName(uri,projection,sortOrder);
@@ -194,7 +193,6 @@ public class DataProvider extends ContentProvider {
                 retCursor = getGameByType(uri,projection,sortOrder);
                 break;
             case GAME:
-                Log.d(LOG_TAG,sGameWithNameQueryBuilder.buildQuery(projection,selection,selectionArgs,null,null,sortOrder,null));
                 retCursor = sGameWithNameQueryBuilder.query(mDataDbHelper.getReadableDatabase(),
                         projection,
                         selection,
@@ -305,7 +303,8 @@ public class DataProvider extends ContentProvider {
 
         switch (match){
             case PLAYER: {
-                long _id = db.insert(DataContract.PlayerEntry.TABLE_NAME, null, values);
+                long _id = db.insertOrThrow(DataContract.PlayerEntry.TABLE_NAME, null, values);
+
                 if (_id > 0)
                     returnUri = DataContract.PlayerEntry.buildPlayerUri(_id);
                 else
@@ -313,7 +312,12 @@ public class DataProvider extends ContentProvider {
                 break;
             }
             case GAME: {
-                long _id = db.insertOrThrow(DataContract.GameEntry.TABLE_NAME, null, values);
+                long _id = -1;
+                try{
+                    _id = db.insertOrThrow(DataContract.GameEntry.TABLE_NAME, null, values);
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
                 if (_id > 0)
                     returnUri = DataContract.GameEntry.buildGameUri(_id);
                 else
@@ -447,4 +451,6 @@ public class DataProvider extends ContentProvider {
         mDataDbHelper.close();
         super.shutdown();
     }
+
+
 }

@@ -2,13 +2,12 @@ package com.realsoc.pipong;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,22 +16,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.realsoc.pipong.model.PlayerModel;
 import com.realsoc.pipong.utils.DataUtils;
-import com.realsoc.pipong.utils.NetworkUtils;
-
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MainActivity";
     private boolean isFirstLaunched;
-    private boolean hasSuscribed;
     private boolean activityCreated = false;
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
+    public static final long SYNC_INTERVAL =
+            SYNC_INTERVAL_IN_MINUTES *
+                    SECONDS_PER_MINUTE;
     public static final String AUTHORITY = "com.realsoc.pipong.data.provider";
     public static final String ACCOUNT_TYPE = "pipong.com";
     public static final String ACCOUNT = "dummyaccount";
+    private static final String ACTIVITY_CREATED = "activityCreated";
+    private static final String DATA_HOLDER_INIT = "dataHolderInit";
     private boolean dataHolderInit = false;
     private final Object dataHolderInitLock = new Object();
     private CreateDataHolder createDataHolder;
@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null){
-            if(savedInstanceState.containsKey("activityCreated")){
-                activityCreated = savedInstanceState.getBoolean("activityCreated");
+            if(savedInstanceState.containsKey(ACTIVITY_CREATED)){
+                activityCreated = savedInstanceState.getBoolean(ACTIVITY_CREATED);
             }
-            if(savedInstanceState.containsKey("dataHolderInit")){
-                dataHolderInit = savedInstanceState.getBoolean("dataHolderInit");
+            if(savedInstanceState.containsKey(DATA_HOLDER_INIT)){
+                dataHolderInit = savedInstanceState.getBoolean(DATA_HOLDER_INIT);
             }
         }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         isFirstLaunched = sharedPreferences.getBoolean(getString(R.string.FIRST_LAUNCHED), true);
         //TODO STRING INTERNATIONALISATION
-        hasSuscribed = sharedPreferences.getBoolean("has_subscribed",false);
         if (isFirstLaunched) {
             // TODO : Tuto or Dialog with choice online or offline
             sharedPreferences.edit().putBoolean(getString(R.string.FIRST_LAUNCHED),false)
@@ -74,18 +73,23 @@ public class MainActivity extends AppCompatActivity {
             activityCreated = true;
         }
         setContentView(R.layout.activity_main);
+
         playerButton = (Button) findViewById(R.id.player_activity_button);
         newGameButton = (Button) findViewById(R.id.new_game_button);
-        /*
-        mAccount = CreateSyncAccount(this);
-        ContentResolver.setIsSyncable(mAccount, "com.realsoc.pipong.data.provider", 1);
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(
-                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(mAccount, "com.realsoc.pipong.data.provider", settingsBundle);*/
-
+        mAccount = new Account(ACCOUNT, MainActivity.ACCOUNT_TYPE);
+        AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+        if (accountManager.addAccountExplicitly(mAccount, null, null)) {
+            Log.d(LOG_TAG, "Account created");
+        } else {
+            Log.d(LOG_TAG, "Account already exists");
+        }
+        ContentResolver.setIsSyncable(mAccount, AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.addPeriodicSync(
+                mAccount,
+                AUTHORITY,
+                Bundle.EMPTY,
+                SYNC_INTERVAL);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -137,27 +141,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void test(View v){
-        DataUtils dataUtils = DataUtils.getInstance(this);
-
-        NetworkUtils networkUtils = NetworkUtils.getInstance(this);
-        HashMap<String,PlayerModel> players = dataUtils.getOfflinePlayersFromDB();
-        Log.d(LOG_TAG,players.toString());
-        networkUtils.postOfflinePlayers();
-        players = dataUtils.getOfflinePlayersFromDB();
-        Log.d(LOG_TAG,players.toString());
-    }
-
-    public static Account CreateSyncAccount(Context context) {
-        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
-        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
-
-        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
-            Log.d(LOG_TAG, "Account created");
-        } else {
-            Log.d(LOG_TAG, "Account already exists");
+    public void ranking(View view) {
+        Button b = (Button) view;
+        b.setEnabled(false);
+        Intent intent = new Intent(this,RankingActivity.class);
+        synchronized (dataHolderInitLock){
+            if(dataHolderInit){
+                b.setEnabled(true);
+                startActivity(intent);
+            }else{
+                createDataHolder.setToLaunch(intent);
+            }
         }
-        return newAccount;
     }
 
     @Override
@@ -173,9 +168,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("activityCreated",activityCreated);
-        outState.putBoolean("dataHolderInit",dataHolderInit);
-    }
+        outState.putBoolean(ACTIVITY_CREATED,activityCreated);
+        outState.putBoolean(DATA_HOLDER_INIT,dataHolderInit);
+    }/*
     public static void backgroundThreadShortToast(final Context context,
                                                   final String msg) {
         if (context != null && msg != null) {
@@ -186,17 +181,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-    }
+    }*/
+
+
 
 
     private class CreateDataHolder extends AsyncTask<Void, Integer, Boolean> {
         private Context context;
         private DataUtils mDataHolder;
         private Intent toLaunch = null;
-        public CreateDataHolder(Context context) {
+        private CreateDataHolder(Context context) {
             this.context = context;
         }
-        public void setToLaunch(Intent nIntent){
+        private void setToLaunch(Intent nIntent){
             toLaunch = nIntent;
         }
 

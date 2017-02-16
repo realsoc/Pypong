@@ -18,154 +18,154 @@
         android:layout_gravity="center">
         <TableRow>
             <TextView
-                android:text="Label"
+                android:text="@string/label"
                 android:textStyle="bold"
                 android:padding="3dip" />
             <TextView
-                android:text="6pts"
-                android:gravity="right"
+                android:text="@string/_6pts"
+                android:gravity="end"
                 android:textStyle="bold"
                 android:padding="3dip" />
             <TextView
-                android:text="11pts"
-                android:gravity="right"
+                android:text="@string/_11pts"
+                android:gravity="end"
                 android:textStyle="bold"
                 android:padding="3dip" />
             <TextView
-                android:text="21pts"
-                android:gravity="right"
+                android:text="@string/_21pts"
+                android:gravity="end"
                 android:textStyle="bold"
                 android:padding="3dip" />
             <TextView
-                android:text="Total"
-                android:gravity="right"
+                android:text="@string/total"
+                android:gravity="end"
                 android:textStyle="bold"
                 android:padding="3dip" />
         </TableRow>
 
         <TableRow>
             <TextView
-                android:text="Games Played"
+                android:text="@string/games_played"
                 android:padding="3dip" />
             <TextView
                 android:id="@+id/gp6"
                 android:text="0"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gp11"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gp21"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gp0"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
         </TableRow>
         <TableRow>
             <TextView
-                android:text="Games Won"
+                android:text="@string/games_won"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gw6"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gw11"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gw21"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gw0"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
         </TableRow>
         <TableRow>
             <TextView
-                android:text="Games Lost"
+                android:text="@string/games_lost"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gl6"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gl11"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gl21"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/gl0"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
         </TableRow>
         <TableRow>
             <TextView
-                android:text="Points Scored"
+                android:text="@string/points_scored"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/ps6"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/ps11"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/ps21"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/ps0"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
         </TableRow>
         <TableRow>
             <TextView
-                android:text="Points Lost"
+                android:text="@string/points_lost"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/pl6"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/pl11"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/pl21"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
             <TextView
                 android:text="0"
                 android:id="@+id/pl0"
-                android:gravity="right"
+                android:gravity="end"
                 android:padding="3dip" />
         </TableRow>
     </TableLayout>

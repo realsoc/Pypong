@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.util.LongSparseArray;
 
 import com.realsoc.pipong.PlayerListFragment;
 import com.realsoc.pipong.R;
@@ -56,20 +57,14 @@ public class DataUtils extends ContextWrapper {
     private volatile HashMap<String,CountModel> counts = null;
     private volatile ArrayList<GameModel> games = null;
     private PlayerListFragment playerFragment;
-    private String hash;
 
     private DataUtils(Context context){
         super(context);
-        Log.d(LOG_TAG,"CONSTRUCTOR");
-        sharedPreferences= getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
         initPlayers();
         initPlayersInConflict();
         initGames();
         initCounts();
-        if(counts.size() == 0){
-            Log.d(LOG_TAG,"Count empty");
-        }else if(counts.size() != players.size())
-            Log.d(LOG_TAG,"BAD : Players & Counts have different size");
     }
     public static DataUtils reset(Context context){
         if(mDataUtils != null) {
@@ -84,66 +79,7 @@ public class DataUtils extends ContextWrapper {
     }
 
 
-    private void addPlayerToPlayers(PlayerModel player){
-        synchronized (playersLock){
-            players.put(player.getName(),player);
-        }
-    }
-    private PlayerModel removePlayerFromPlayers(String name){
-        synchronized (playersLock){
-            return players.remove(name);
-        }
-    }
-    private void addCountToCounts(CountModel count){
-        synchronized (countLock){
-            counts.put(count.getName(),count);
-        }
-    }
-    private CountModel removeCountFromCounts(String name){
-        synchronized (countLock){
-            return counts.remove(name);
-        }
-    }
-    private boolean removeGameFromGames(GameModel game){
-        synchronized (gamesLock){
-            return games.remove(game);
-        }
-    }
-    private void addGameToGames(GameModel game){
-        synchronized (gamesLock){
-            games.add(game);
-        }
-    }
-    private boolean gamesContains(GameModel game){
-        synchronized (gamesLock){
-            return games.contains(game);
-        }
-    }
-   private boolean removePlayerFromPlayerSAL(String name){
-        synchronized (playerSALLock){
-            return playerAsStringList.remove(name);
-        }
-    }
-    private void addPlayerToPLayerSAL(String name){
-        synchronized (playerSALLock){
-            playerAsStringList.add(name);
-        }
-    }
-    private boolean playerSALContains(String name){
-        synchronized (playerSALLock){
-            return playerAsStringList.contains(name);
-        }
-    }
-    private boolean countsContains(String name){
-        synchronized (countLock){
-            return counts.containsKey(name);
-        }
-    }
-    private boolean playersContains(String name){
-        synchronized (playersLock){
-            return players.containsKey(name);
-        }
-    }
+
     public static DataUtils getInstance(Context context){
         if(mDataUtils == null) {
             synchronized (singletonLock) {
@@ -159,7 +95,6 @@ public class DataUtils extends ContextWrapper {
         if(playersContains(player.getName())){
             Log.d(LOG_TAG,"Player already existing : "+player.getName());
         }else{
-            Log.d(LOG_TAG,"adding player "+player.getName());
             Uri uri = addPlayerInDB(player);
             player.setId(ContentUris.parseId(uri));
             addPlayerToPlayers(player);
@@ -169,12 +104,8 @@ public class DataUtils extends ContextWrapper {
         }
     }
     public void addOnlinePlayers(HashMap<String,PlayerModel> players){
-        Log.d(LOG_TAG,"addingonlineplayers");
-        Iterator<Map.Entry<String,PlayerModel>> it = players.entrySet().iterator();
-        while (it.hasNext()){
-            /*Map.Entry<String,PlayerModel> pair = it.next();
-            Log.d(LOG_TAG,pair.getValue().getName());*/
-
+        Iterator<Map.Entry<String,PlayerModel>> it;
+        for (it = players.entrySet().iterator();it.hasNext();){
             PlayerModel tempPlayer = it.next().getValue();
             tempPlayer.setOnline(true);
             addPlayer(tempPlayer);
@@ -183,33 +114,84 @@ public class DataUtils extends ContextWrapper {
     public void addOnlineGames(ArrayList<GameModel> games){
         for(GameModel game : games){
             game.setOnline(true);
-            Log.d(LOG_TAG,"player2name :"+game.getPlayer2());
-            Log.d(LOG_TAG,"player2 :"+players.get(game.getPlayer2()));
-            Log.d(LOG_TAG,"player1name :"+game.getPlayer1());
-            Log.d(LOG_TAG,"player1 :"+players.get(game.getPlayer1()));
+            Log.d(LOG_TAG,"size "+players.size());
             game.setPlayer1_id(players.get(game.getPlayer1()).getId());
             game.setPlayer2_id(players.get(game.getPlayer2()).getId());
             addGame(game);
         }
     }
-    private void updatePlayer(PlayerModel player){
-        if(players.containsKey(player.getName())){
-            Log.d(LOG_TAG,"Player already existing");
-        }else{
-            String defaultUser = sharedPreferences.getString(getString(R.string.HASH),"1");
-            if(player.getUser().equals("0")){
-                player.setUser(defaultUser);
+    public static ArrayList<String> JsonToPlayersNameArrayList(JSONArray response) throws JSONException {
+        ArrayList<String> playerNotPersist = new ArrayList<>();
+        for(int i =0;i<response.length();i++){
+            PlayerModel play = new PlayerModel(response.getJSONObject(i));
+            playerNotPersist.add(play.getName());
+        }
+        return playerNotPersist;
+    }
+    public static ArrayList<GameModel> JsonToGamesArrayList(JSONArray response) throws JSONException {
+        ArrayList<GameModel> gamesNotPersist = new ArrayList<>();
+        for(int i =0;i<response.length();i++){
+            GameModel game = new GameModel(response.getJSONObject(i));
+            gamesNotPersist.add(game);
+        }
+        return gamesNotPersist;
+    }
+
+    public void playersInConflict(ArrayList<String> playersNotPersists) {
+        synchronized (playersLock){
+            for(String play : playersNotPersists){
+                PlayerModel player = players.get(play);
+                if(player !=null){
+                    player.setConflict(true);
+                    inConflict(player);
+                    updatePlayer(player);
+                }
             }
-            ContentValues playerValues = createPlayerValuesFromModel(player);
-            updatePlayer(player.getId(),playerValues);
-            synchronized (playersLock){
-                if(!playersContains(player.getName()))
-                    addPlayerToPlayers(player);
-                if(!playerSALContains(player.getName()))
-                    addPlayerToPLayerSAL(player.getName());
+            if(playerFragment != null){
+                playerFragment.adviseDataChanged();
             }
         }
     }
+    public boolean hasConflict(){
+        return playersInConflict.size()!=0;
+    }
+    public HashMap<String,PlayerModel> getPersistPlayersFromJSON(JSONArray playersArray) throws JSONException {
+        HashMap<String,PlayerModel> ret = new HashMap<>();
+        PlayerModel tempPlayer;
+        for(int i =0;i<playersArray.length();i++){
+            tempPlayer = new PlayerModel(playersArray.getJSONObject(i));
+            ret.put(tempPlayer.getName(),tempPlayer);
+        }
+        return ret;
+    }
+    public ArrayList<GameModel> getPersistGamesFromJSON(JSONArray gamesArray) throws JSONException {
+        ArrayList<GameModel> ret = new ArrayList<>();
+        for(int i =0;i<gamesArray.length();i++){
+            ret.add(new GameModel(gamesArray.getJSONObject(i)));
+        }
+        return ret;
+    }
+
+    public void unregisterPlayerFragment() {
+        playerFragment = null;
+    }
+
+    public void registerPlayerFragment(PlayerListFragment playerListFragment) {
+        playerFragment = playerListFragment;
+    }
+
+    public boolean containsPlayer(String newName) {
+        return players.containsKey(newName);
+    }
+
+    public void removePlayer(String name) {
+        removePlayerFromPlayerSAL(name);
+        PlayerModel player = removePlayerFromPlayers(name);
+        CountModel count = removeCountFromCounts(name);
+        removePlayerInDB(player);
+        removeCountInDB(count);
+    }
+
 
     public void addGame(GameModel game){
         Uri uri = addGameInDB(game);
@@ -243,7 +225,7 @@ public class DataUtils extends ContextWrapper {
     public boolean isInit() {
         return (players != null) && (games != null) && (counts != null);
     }
-
+/*
     public int dropOfflinePlayers(){
         final String offlineString = PlayerEntry.COLUMN_IS_ONLINE + " = 0";
         return getContentResolver().delete(PlayerEntry.CONTENT_URI,offlineString,null);
@@ -251,7 +233,7 @@ public class DataUtils extends ContextWrapper {
     public int dropOfflineGames(){
         final String offlineString = GameEntry.COLUMN_IS_ONLINE + " = 0";
         return getContentResolver().delete(GameEntry.CONTENT_URI,offlineString,null);
-    }
+    }*/
     public int dropCounts(){
         return getContentResolver().delete(CountEntry.CONTENT_URI,null,null);
     }
@@ -261,7 +243,7 @@ public class DataUtils extends ContextWrapper {
     public int dropPlayers(){
         return getContentResolver().delete(PlayerEntry.CONTENT_URI,null,null);
     }
-
+/*
     public PlayerModel getPlayerById(long id, ArrayList<PlayerModel> players){
         for(PlayerModel player : players){
             if(player.getId() == id){
@@ -269,7 +251,7 @@ public class DataUtils extends ContextWrapper {
             }
         }
         return null;
-    }
+    }*/
     public void modifyPlayer(String oldName,String newName){
         PlayerModel player = removePlayerFromPlayers(oldName);
         removePlayerFromPlayerSAL(oldName);
@@ -283,8 +265,6 @@ public class DataUtils extends ContextWrapper {
         CountModel count = removeCountFromCounts(oldName);
         count.setName(newName);
         addCountToCounts(count);
-        Log.d(LOG_TAG,"Updating player "+player.getName());
-        int o =0;
     }
 
     public void notInConflict(String player) {
@@ -292,24 +272,9 @@ public class DataUtils extends ContextWrapper {
             playersInConflict.remove(player);
         }
     }
-    private void inConflict(PlayerModel player){
-        synchronized (playersInConflictLock){
-            playersInConflict.put(player.getName(),player);
-        }
-    }
 
-    private void updateCount(CountModel count) {
-        addCountToCounts(count);
-        ContentValues countValue = createCountValuesFromModel(count);
-        updateCount(count.getId(),countValue);
-    }
-
-    private void updateCount(long id, ContentValues countValue) {
-        getContentResolver().update(CountEntry.CONTENT_URI,countValue, CountEntry.COLUMN_ID+" = ?",new String[]{""+id});
-    }
 
     public HashMap<String,PlayerModel> getOfflinePlayersFromDB(){
-        //Uri uri = PlayerEntry.buildPlayerOffline();
         Cursor playerCursor = getContentResolver().query(PlayerEntry.CONTENT_URI,null, PlayerEntry.COLUMN_IS_ONLINE+" = ?",new String[]{"0"},null);
         return createPlayerHashMapFromCursor(playerCursor);
     }
@@ -322,28 +287,11 @@ public class DataUtils extends ContextWrapper {
         String selection = GameEntry.ALIAS+"."+GameEntry.COLUMN_IS_ONLINE+" = ?";
         String[] selectionArgs = new String[]{"0"};
         Cursor gameCursor = getContentResolver().query(GameEntry.CONTENT_URI,projection, selection,selectionArgs,null);
-        String[] columnNames = gameCursor.getColumnNames();
-        Log.d(LOG_TAG,"COUNT "+gameCursor.getCount());
-        for(String name : columnNames){
-            Log.d(LOG_TAG,"et "+name);
-        }
         ArrayList<GameModel> gamesAL =  createGameArrayListFromCursor(gameCursor);
         return removeOfflinePlayersGames(gamesAL,playersHM.keySet());
     }
 
-    private ArrayList<GameModel> removeOfflinePlayersGames(ArrayList<GameModel> gamesAL, Set<String> playersSet) {
-        ArrayList<GameModel> gamesToDel = new ArrayList<>();
-        for(GameModel game : gamesAL){
-            if(playersSet.contains(game.getPlayer1()) || playersSet.contains(game.getPlayer2())){
-                gamesToDel.add(game);
-            }
-        }
-        for(GameModel gameToDel :gamesToDel){
-            gamesAL.remove(gameToDel);
-        }
-        return gamesAL;
-    }
-
+/*
     public CountModel getCountByNameFromDB(String name){
         Uri uri = CountEntry.buildCountWithName(name);
         Cursor countCursor = getContentResolver().query(uri,null,null,null,null);
@@ -353,7 +301,8 @@ public class DataUtils extends ContextWrapper {
         }
         countCursor.moveToFirst();
         return ((CountModel) getModelFromCursor(countCursor, CountModel.class));
-    }
+    }*/
+    /*
     public PlayerModel getPlayerByName(String name, ArrayList<PlayerModel> players){
         for(PlayerModel player : players){
             if(player.getName().equals(name)){
@@ -361,7 +310,7 @@ public class DataUtils extends ContextWrapper {
             }
         }
         return null;
-    }
+    }*//*
     public JSONObject createPostUserJson() throws JSONException {
 
         String hash = sharedPreferences.getString(getString(R.string.HASH),"");
@@ -371,15 +320,15 @@ public class DataUtils extends ContextWrapper {
             ret.put(getString(R.string.HASH),hash);
         }
         return ret;
-    }
+    }*/
     public JSONObject createPostPlayersJson(HashMap<String, PlayerModel> players) throws JSONException {
 
         JSONArray playerRequest = new JSONArray();
         JSONObject globalRequest = new JSONObject();
         String hash = sharedPreferences.getString(getString(R.string.HASH), "");
-        Iterator<Map.Entry<String,PlayerModel>> it = players.entrySet().iterator();
+        Iterator<Map.Entry<String,PlayerModel>> it;
 
-        while(it.hasNext()){
+        for(it = players.entrySet().iterator();it.hasNext();){
             Map.Entry<String,PlayerModel> pair = it.next();
             playerRequest.put(pair.getValue().toJSON());
         }
@@ -398,43 +347,87 @@ public class DataUtils extends ContextWrapper {
         globalRequest.put("data",gameRequest);
         return globalRequest;
     }
-    private void updatePlayer(Long id, ContentValues contentValues){
-        Log.d(LOG_TAG,"UPDATING PLAYER ");
-        getContentResolver().update(PlayerEntry.CONTENT_URI,contentValues, PlayerEntry.COLUMN_ID+" = ?",new String[]{""+id});
-    }
-    private void updateGame(Long id, ContentValues contentValues){
-        getContentResolver().update(GameEntry.CONTENT_URI,contentValues, GameEntry.COLUMN_ID+" = ?",new String[]{""+id});
-    }
+
     public void compareAndPutOnline(HashMap<String,PlayerModel> allPlayers,ArrayList<String> errorPlayers){
         for(String player : errorPlayers){
             allPlayers.remove(player);
         }
-        HashMap<Long,ContentValues> playersValues = createSeveralPlayersValuesFromModel(allPlayers,true);
-        Iterator<Map.Entry<Long,ContentValues>> it = playersValues.entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry<Long,ContentValues> pair = it.next();
-            updatePlayer(pair.getKey(),pair.getValue());
+        LongSparseArray<ContentValues> playersValues = createSeveralPlayersValuesFromModel(allPlayers,true);
+        for(int i =0; i<playersValues.size();i++){
+            long id = playersValues.keyAt(i);
+            Log.d(LOG_TAG,"id "+id+" player "+playersValues.get(id));
+            updatePlayer(id,playersValues.get(id));
         }
     }
     public void compareAndPutOnline(ArrayList<GameModel> allGames,ArrayList<GameModel> errorGames){
         for(GameModel game : errorGames){
             allGames.remove(game);
         }
-        HashMap<Long,ContentValues> gamesValues = createSeveralGamesValuesFromModel(allGames,true);
-        Iterator<Map.Entry<Long,ContentValues>> it = gamesValues.entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry<Long,ContentValues> pair = it.next();
-            updateGame(pair.getKey(),pair.getValue());
+        LongSparseArray<ContentValues> gamesValues = createSeveralGamesValuesFromModel(allGames,true);
+        for(int i =0;i<gamesValues.size();i++){
+            long id = gamesValues.keyAt(i);
+            updateGame(id,gamesValues.get(id));
         }
+    }
+    public void turnEverythingOffline() {
+        turnGamesffline();
+        turnPlayersOffline();
+    }
+    private void updatePlayer(PlayerModel player){
+        if(players.containsKey(player.getName())){
+            Log.d(LOG_TAG,"Player already existing "+player.getName());
+        }else{
+            String defaultUser = sharedPreferences.getString(getString(R.string.HASH),"1");
+            if(player.getUser().equals("0")){
+                player.setUser(defaultUser);
+            }
+            ContentValues playerValues = createPlayerValuesFromModel(player);
+            updatePlayer(player.getId(),playerValues);
+            synchronized (playersLock){
+                if(!playersContains(player.getName()))
+                    addPlayerToPlayers(player);
+                if(!playerSALContains(player.getName()))
+                    addPlayerToPLayerSAL(player.getName());
+            }
+        }
+    }
+    private void inConflict(PlayerModel player){
+        synchronized (playersInConflictLock){
+            playersInConflict.put(player.getName(),player);
+        }
+    }
+/*
+    private void updateCount(CountModel count) {
+        addCountToCounts(count);
+        ContentValues countValue = createCountValuesFromModel(count);
+        updateCount(count.getId(),countValue);
+    }*/
+/*
+    private void updateCount(long id, ContentValues countValue) {
+        getContentResolver().update(CountEntry.CONTENT_URI,countValue, CountEntry.COLUMN_ID+" = ?",new String[]{""+id});
+    }*/
+    private ArrayList<GameModel> removeOfflinePlayersGames(ArrayList<GameModel> gamesAL, Set<String> playersSet) {
+        ArrayList<GameModel> gamesToDel = new ArrayList<>();
+        for(GameModel game : gamesAL){
+            if(playersSet.contains(game.getPlayer1()) || playersSet.contains(game.getPlayer2())){
+                gamesToDel.add(game);
+            }
+        }
+        for(GameModel gameToDel :gamesToDel){
+            gamesAL.remove(gameToDel);
+        }
+        return gamesAL;
+    }
+    private void updatePlayer(Long id, ContentValues contentValues){
+        getContentResolver().update(PlayerEntry.CONTENT_URI,contentValues, PlayerEntry.COLUMN_ID+" = ?",new String[]{""+id});
+    }
+    private void updateGame(Long id, ContentValues contentValues){
+        getContentResolver().update(GameEntry.CONTENT_URI,contentValues, GameEntry.COLUMN_ID+" = ?",new String[]{""+id});
     }
     private void initPlayers(){
         synchronized (playersLock) {
             players = getPlayersFromDB(null, null, null, PlayerEntry.COLUMN_PLAYER_NAME+" ASC");
         }
-        if(players == null)
-            Log.d(LOG_TAG,"Error getting players");
-        else if(players.size() == 0)
-            Log.d(LOG_TAG,"Players empty");
         synchronized (playerSALLock){
             playerAsStringList = getPlayersSALFromDB(null, null, null, PlayerEntry.COLUMN_PLAYER_NAME+" ASC");
         }
@@ -469,19 +462,12 @@ public class DataUtils extends ContextWrapper {
 
     }
     private void initCounts(){
-        int a = 0;
         synchronized (countLock) {
             counts = getCountsFromDB(
                     new String[]{
                             CountEntry.ALIAS+".*",
                             PlayerEntry.TABLE_NAME+"."+PlayerEntry.COLUMN_PLAYER_NAME
                     }, null, null, null);
-            if (counts == null)
-                Log.d(LOG_TAG, "Error getting counts");
-            else if (players.size() == 0)
-                Log.d(LOG_TAG, "Counts empty");
-            if (players != null && counts.size() != players.size())
-                Log.d(LOG_TAG, "Players & Counts have different size");
         }
     }
 
@@ -497,7 +483,6 @@ public class DataUtils extends ContextWrapper {
         }
     }
     private Uri addCountInDB(CountModel count){
-        Log.d(LOG_TAG,"Adding count in db "+count.getName());
         ContentValues countValues = createCountValuesFromModel(count);
         return getContentResolver().insert(CountEntry.CONTENT_URI,countValues);
     }
@@ -559,11 +544,6 @@ public class DataUtils extends ContextWrapper {
                 selection,
                 selectionArgs,
                 sortOrder);
-        String[] names = playersCursor.getColumnNames();
-        for(int i=0;i<names.length;i++){
-            Log.d(LOG_TAG,"Key "+names[i]);
-            //Log.d(LOG_TAG,"Val "+playersCursor.getnames[i]);
-        }
         return createPlayerHashMapFromCursor(playersCursor);
     }
     private ArrayList<String> getPlayersSALFromDB(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
@@ -584,10 +564,6 @@ public class DataUtils extends ContextWrapper {
                 selection,
                 selectionArgs,
                 sortOrder);
-        String[] columns = gamesCursor.getColumnNames();
-        for(String col:columns){
-            Log.d(LOG_TAG,col);
-        }
         return createGameArrayListFromCursor(gamesCursor);
     }
     private HashMap<String,CountModel> getCountsFromDB(String[] projection, String selection, String[] selectionArgs, String sortOrder){
@@ -597,12 +573,6 @@ public class DataUtils extends ContextWrapper {
                 selection,
                 selectionArgs,
                 sortOrder);
-        Log.d(LOG_TAG,"Countcursor size "+countCursor.getCount());
-        String[] columns = countCursor.getColumnNames();
-        for(String name:columns){
-            Log.d(LOG_TAG,"cou "+name);
-        }
-        Log.d(LOG_TAG," "+countCursor.getCount());
         return createCountHashMapFromCursor(countCursor);
     }
     private HashMap<String, CountModel> createCountHashMapFromCursor(Cursor countCursor) {
@@ -659,13 +629,12 @@ public class DataUtils extends ContextWrapper {
         HashMap<String,PlayerModel> ret = new HashMap<>();
         String defaultUser = sharedPreferences.getString(getString(R.string.HASH),"1");
         if(playersCursor.getCount()<1){
-            Log.d(LOG_TAG,"PLAYER CURSOR EMPTY");
             return ret;
         }
         playersCursor.moveToFirst();
         do{
             PlayerModel tempPlayer = (PlayerModel) getModelFromCursor(playersCursor,PlayerModel.class);
-            if(tempPlayer.getUser().equals("0")){
+            if(tempPlayer.getUser().equals("0")||tempPlayer.getUser().equals("1")){
                 tempPlayer.setUser(defaultUser);
             }
             ret.put(tempPlayer.getName(),tempPlayer);
@@ -677,7 +646,6 @@ public class DataUtils extends ContextWrapper {
     private Object getModelFromCursor(Cursor cursor, Class modelClass) {
         Object ret = null;
         if (modelClass.getSimpleName().equals(PlayerModel.class.getSimpleName())){
-            Log.d(LOG_TAG,"Detecting player");
             long id = cursor.getLong(
                     cursor.getColumnIndex(PlayerEntry.COLUMN_ID));
             String name = cursor.getString(
@@ -688,8 +656,6 @@ public class DataUtils extends ContextWrapper {
                     cursor.getColumnIndex(PlayerEntry.COLUMN_IS_ONLINE)) == 1;
             ret = new PlayerModel(id,name,user,online);
         }else if(modelClass.getSimpleName().equals(GameModel.class.getSimpleName())){
-            Log.d(LOG_TAG,"Detecting game");
-
             long id = cursor.getLong(
                     cursor.getColumnIndex(GameEntry.COLUMN_ID));
             int type = cursor.getInt(
@@ -758,10 +724,9 @@ public class DataUtils extends ContextWrapper {
     private ContentValues createPlayerValuesFromModel(PlayerModel player) {
         ContentValues playerValues = new ContentValues();
         String user = player.getUser();
-        if(user.equals("0")){
+        if(user.equals("0") || user.equals("1")){
             user = sharedPreferences.getString(getString(R.string.HASH),"1");
         }
-        Log.d(LOG_TAG,"UPDATING "+player.getName());
         playerValues.put(PlayerEntry.COLUMN_PLAYER_NAME,player.getName());
         playerValues.put(PlayerEntry.COLUMN_IS_ONLINE,player.isOnline());
         playerValues.put(PlayerEntry.COLUMN_USER,user);
@@ -791,8 +756,6 @@ public class DataUtils extends ContextWrapper {
         gameValues.put(GameEntry.COLUMN_PLAYER1_ID,player1_id);
         gameValues.put(GameEntry.COLUMN_PLAYER2_ID,player2_id);
         gameValues.put(GameEntry.COLUMN_USER,user);
-        //gameValues.put(GameEntry.COLUMN_PLAYER1_NAME,game.getPlayer1());
-        //gameValues.put(GameEntry.COLUMN_PLAYER2_NAME,game.getPlayer2());
         gameValues.put(GameEntry.COLUMN_PLAYER1_SCORE,game.getScorePlayer1());
         gameValues.put(GameEntry.COLUMN_PLAYER2_SCORE,game.getScorePlayer2());
         return gameValues;
@@ -858,23 +821,21 @@ public class DataUtils extends ContextWrapper {
         gameValues.put(GameEntry.COLUMN_PLAYER1_ID,player1_id);
         gameValues.put(GameEntry.COLUMN_PLAYER2_ID,player2_id);
         gameValues.put(GameEntry.COLUMN_USER,user);
-        //gameValues.put(GameEntry.COLUMN_PLAYER1_NAME,game.getPlayer1());
-        //gameValues.put(GameEntry.COLUMN_PLAYER2_NAME,game.getPlayer2());
         gameValues.put(GameEntry.COLUMN_PLAYER1_SCORE,game.getScorePlayer1());
         gameValues.put(GameEntry.COLUMN_PLAYER2_SCORE,game.getScorePlayer2());
         return gameValues;
     }
-    private HashMap<Long,ContentValues> createSeveralPlayersValuesFromModel(HashMap<String,PlayerModel> players,boolean online) {
-        HashMap<Long,ContentValues> playersValues = new HashMap<>();
-        Iterator<Map.Entry<String,PlayerModel>> it = players.entrySet().iterator();
-        while(it.hasNext()){
+    private LongSparseArray<ContentValues> createSeveralPlayersValuesFromModel(HashMap<String,PlayerModel> players,boolean online) {
+        LongSparseArray<ContentValues> playersValues = new LongSparseArray<>();
+        Iterator<Map.Entry<String,PlayerModel>> it ;
+        for(it = players.entrySet().iterator();it.hasNext();){
             Map.Entry<String,PlayerModel> pair = it.next();
             playersValues.put(pair.getValue().getId(),createPlayerValuesFromModel(pair.getValue(),online));
         }
         return playersValues;
     }
-    private HashMap<Long,ContentValues> createSeveralGamesValuesFromModel(ArrayList<GameModel> games,boolean online){
-        HashMap<Long,ContentValues> gamesValues = new HashMap<>();
+    private LongSparseArray<ContentValues> createSeveralGamesValuesFromModel(ArrayList<GameModel> games,boolean online){
+        LongSparseArray<ContentValues> gamesValues = new LongSparseArray<>();
         for(int i = 0; i < games.size(); i++){
             gamesValues.put(games.get(i).getId(),createGameValuesFromModel(games.get(i),online));
         }
@@ -883,7 +844,7 @@ public class DataUtils extends ContextWrapper {
 
 
     private void createCountDB(){
-        HashSet<String> playerWithoutCount = new HashSet<String>();
+        HashSet<String> playerWithoutCount = new HashSet<>();
         for(String player : players.keySet()){
             if(!counts.containsKey(player)){
                 playerWithoutCount.add(player);
@@ -916,84 +877,6 @@ public class DataUtils extends ContextWrapper {
             addCountInDB(counts.get(player));
         }
     }
-
-    public static ArrayList<String> JsonToPlayersNameArrayList(JSONArray response) throws JSONException {
-        ArrayList<String> playerNotPersist = new ArrayList<>();
-        for(int i =0;i<response.length();i++){
-            PlayerModel play = new PlayerModel(response.getJSONObject(i));
-            playerNotPersist.add(play.getName());
-        }
-        return playerNotPersist;
-    }
-    public static ArrayList<GameModel> JsonToGamesArrayList(JSONArray response) throws JSONException {
-        ArrayList<GameModel> gamesNotPersist = new ArrayList<>();
-        for(int i =0;i<response.length();i++){
-            GameModel game = new GameModel(response.getJSONObject(i));
-            gamesNotPersist.add(game);
-        }
-        return gamesNotPersist;
-    }
-
-    public void playersInConflict(ArrayList<String> playersNotPersists) {
-        synchronized (playersLock){
-            for(String play : playersNotPersists){
-                PlayerModel player = players.get(play);
-                if(player !=null){
-                    player.setConflict(true);
-                    inConflict(player);
-                    updatePlayer(player);
-                }
-            }
-            if(playerFragment != null){
-                playerFragment.adviseDataChanged();
-            }
-        }
-    }
-    public boolean hasConflict(){
-        return playersInConflict.size()!=0;
-    }
-    public HashMap<String,PlayerModel> getPersistPlayersFromJSON(JSONArray playersArray) throws JSONException {
-        HashMap<String,PlayerModel> ret = new HashMap<>();
-        PlayerModel tempPlayer;
-        for(int i =0;i<playersArray.length();i++){
-            tempPlayer = new PlayerModel(playersArray.getJSONObject(i));
-            ret.put(tempPlayer.getName(),tempPlayer);
-        }
-        return ret;
-    }
-    public ArrayList<GameModel> getPersistGamesFromJSON(JSONArray gamesArray) throws JSONException {
-        ArrayList<GameModel> ret = new ArrayList<>();
-        for(int i =0;i<gamesArray.length();i++){
-            ret.add(new GameModel(gamesArray.getJSONObject(i)));
-        }
-        return ret;
-    }
-
-    public void unregisterPlayerFragment() {
-        playerFragment = null;
-    }
-
-    public void registerPlayerFragment(PlayerListFragment playerListFragment) {
-        playerFragment = playerListFragment;
-    }
-    public void test(String who){
-       // Log.d(LOG_TAG,who+" SAL SIZE "+playerAsStringList.size()+" id : "+System.identityHashCode(playerAsStringList));
-        Log.d(LOG_TAG,who+" PHM SIZE "+players.size()+" id : "+System.identityHashCode(players));
-        Log.d(LOG_TAG,who+" DataUtils id : "+System.identityHashCode(this));
-    }
-
-    public boolean containsPlayer(String newName) {
-        return players.containsKey(newName);
-    }
-
-    public void removePlayer(String name) {
-       removePlayerFromPlayerSAL(name);
-        PlayerModel player = removePlayerFromPlayers(name);
-        CountModel count = removeCountFromCounts(name);
-        removePlayerInDB(player);
-        removeCountInDB(count);
-    }
-
     private void removeCountInDB(CountModel count) {
         if(count.getId()>=0){
             long id = count.getId();
@@ -1022,8 +905,85 @@ public class DataUtils extends ContextWrapper {
         getContentResolver().update(GameEntry.CONTENT_URI,contentValues,null,null);
     }
 
-    public void turnEverythingOffline() {
-        turnGamesffline();
-        turnPlayersOffline();
+
+    private void addPlayerToPlayers(PlayerModel player){
+        synchronized (playersLock){
+            players.put(player.getName(),player);
+        }
+    }
+    private PlayerModel removePlayerFromPlayers(String name){
+        synchronized (playersLock){
+            return players.remove(name);
+        }
+    }
+    private void addCountToCounts(CountModel count){
+        synchronized (countLock){
+            counts.put(count.getName(),count);
+        }
+    }
+    private CountModel removeCountFromCounts(String name){
+        synchronized (countLock){
+            return counts.remove(name);
+        }
+    }/*
+    private boolean removeGameFromGames(GameModel game){
+        synchronized (gamesLock){
+            return games.remove(game);
+        }
+    }*/
+    private void addGameToGames(GameModel game){
+        synchronized (gamesLock){
+            games.add(game);
+        }
+    }/*
+    private boolean gamesContains(GameModel game){
+        synchronized (gamesLock){
+            return games.contains(game);
+        }
+    }*/
+    private boolean removePlayerFromPlayerSAL(String name){
+        synchronized (playerSALLock){
+            return playerAsStringList.remove(name);
+        }
+    }
+    private void addPlayerToPLayerSAL(String name){
+        synchronized (playerSALLock){
+            playerAsStringList.add(name);
+        }
+    }
+    private boolean playerSALContains(String name){
+        synchronized (playerSALLock){
+            return playerAsStringList.contains(name);
+        }
+    }/*
+    private boolean countsContains(String name){
+        synchronized (countLock){
+            return counts.containsKey(name);
+        }
+    }*/
+    private boolean playersContains(String name){
+        synchronized (playersLock){
+            return players.containsKey(name);
+        }
+    }
+
+    public HashMap<String,Long> getPlayersWithPonctuation() {
+        HashMap<String,Long> ret = new HashMap<>();
+        for(String player : playerAsStringList){
+            long coef = 0;
+            CountModel count = counts.get(player);
+            long dividor = count.getGamePlayed6()+count.getGamePlayed11()+count.getGamePlayed21();
+            if(dividor != 0){
+                coef += count.getGameWon6()*100;
+                coef += count.getGameWon11()*100;
+                coef += count.getGameWon21()*100;
+                coef = coef / dividor;
+                ret.put(player,coef);
+            }else {
+                ret.put(player,0L);
+            }
+
+        }
+        return ret;
     }
 }

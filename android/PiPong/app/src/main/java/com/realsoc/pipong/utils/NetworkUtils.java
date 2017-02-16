@@ -69,7 +69,7 @@ public class NetworkUtils extends ContextWrapper{
         Log.d(LOG_TAG,"GETALL BORDER");
         Log.d(LOG_TAG,"conflict ?"+dataUtils.hasConflict());
         String baseServerIp = sharedPreferences.getString(getString(R.string.SERVER_IP),"0.0.0.0");
-        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches()) {
+        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches() || baseServerIp.matches(NetworkUtils.ADDRESS_REGEX)) {
             String serverIp = "http://" + baseServerIp + ":3000";
             isOnline = sharedPreferences.getBoolean(getString(R.string.IS_ONLINE), false);
             initialized = sharedPreferences.getBoolean(getString(R.string.HAS_SUBSCRIBED), false);
@@ -140,7 +140,7 @@ public class NetworkUtils extends ContextWrapper{
 
     public void subscribe()  {
         String baseServerIp = sharedPreferences.getString(getString(R.string.SERVER_IP),"0.0.0.0");
-        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches()) {
+        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches()  || baseServerIp.matches(NetworkUtils.ADDRESS_REGEX)) {
             String serverIp = "http://" + baseServerIp + ":3000";
             isOnline = sharedPreferences.getBoolean(getString(R.string.IS_ONLINE), false);
             initialized = sharedPreferences.getBoolean(getString(R.string.HAS_SUBSCRIBED), false);
@@ -191,7 +191,8 @@ public class NetworkUtils extends ContextWrapper{
 
     public void postOfflinePlayers(){
         String baseServerIp = sharedPreferences.getString(getString(R.string.SERVER_IP),"0.0.0.0");
-        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches()) {
+        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches() || baseServerIp.matches(NetworkUtils.ADDRESS_REGEX)) {
+            Log.d(LOG_TAG,"POSTOFFLINE");
             String serverIp = "http://" + baseServerIp + ":3000";
             isOnline = sharedPreferences.getBoolean(getString(R.string.IS_ONLINE), false);
             initialized = sharedPreferences.getBoolean(getString(R.string.HAS_SUBSCRIBED), false);
@@ -207,6 +208,7 @@ public class NetworkUtils extends ContextWrapper{
                     try {
                         final HashMap<String, PlayerModel> offlinePlayers = dataUtils.getOfflinePlayersFromDB();
                         JSONObject playersToSend = dataUtils.createPostPlayersJson(offlinePlayers);
+                        Log.d(LOG_TAG,"POSTWORKED");
                         JsonArrayRequestPlus arrayRequest = new JsonArrayRequestPlus
                                 (Request.Method.POST, serverIp + "/players", playersToSend, new Response.Listener<JSONArray>() {
                                     @Override
@@ -248,7 +250,7 @@ public class NetworkUtils extends ContextWrapper{
     }
     public void postOfflineGames(){
         String baseServerIp = sharedPreferences.getString(getString(R.string.SERVER_IP),"0.0.0.0");
-        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches()) {
+        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches() || baseServerIp.matches(NetworkUtils.ADDRESS_REGEX)) {
             String serverIp = "http://" + baseServerIp + ":3000";
             isOnline = sharedPreferences.getBoolean(getString(R.string.IS_ONLINE), false);
             initialized = sharedPreferences.getBoolean(getString(R.string.HAS_SUBSCRIBED), false);
@@ -302,7 +304,7 @@ public class NetworkUtils extends ContextWrapper{
 
     public  void getHash(){
         String baseServerIp = sharedPreferences.getString(getString(R.string.SERVER_IP),"0.0.0.0");
-        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches()) {
+        if(Patterns.IP_ADDRESS.matcher(baseServerIp).matches() || baseServerIp.matches(NetworkUtils.ADDRESS_REGEX)) {
             String serverIp = "http://" + baseServerIp + ":3000";
             hash = sharedPreferences.getString(getString(R.string.HASH), "");
             Log.d(LOG_TAG, "GETHASH " + hash);
